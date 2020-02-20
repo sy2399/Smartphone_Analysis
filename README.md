@@ -30,8 +30,13 @@ Result : [timestamp, package, Category]
   * LDA 적용: 일별 앱 사용을 문서화 하여, 일별 앱 사용 패턴의 Topic 도출
   * ISSUE : Communication 카테고리의 사용 count 가 너무 많음
 
-
   (file : Code/02.Feature Extraction/LDA_TopicModeling)
+  * Communication 제거 or 채팅/SNS 분리
+  
+  🎑🍚Take a Rest : Cluster 1 & 7
+  📑Studying : Cluster 2 & 3 & 6
+  🎬Shopping : Cluster 4 & 5
+
   
 - 💡 Graph
 
