@@ -72,7 +72,7 @@ def toDatetime(df, timeCol , format_):
     return df
 
 
-def getGoogleCategory(App):
+def getGoogleCategory(App, cat_list):
     """
     param
     - App : package Full name 
@@ -80,7 +80,7 @@ def getGoogleCategory(App):
     usage : util.getGoogleCategory('com.no.color')
 
     """
-    cat_list = pd.read_csv('data/Cat_group.csv') #grouped category list
+#    cat_list = pd.read_csv('Cat_group.csv') #grouped category list
 
     url = "https://play.google.com/store/apps/details?id="+App
     google_Category = ""
