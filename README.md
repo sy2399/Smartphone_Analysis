@@ -24,7 +24,7 @@ Result : [timestamp, package, Category]
   * count of each category in a day (Using categorized data)
   * transition count of category (Using categorized data)
   * duration of each category in a day (Using time_mapped data)
-- LDA
+- 💡LDA
   * 유저의 앱 사용 기록을 카테고리화 (google-play store)
   * 유저의 일별 모든 앱 사용의 카테고리를 하나의 문서로 취급
   * LDA 적용: 일별 앱 사용을 문서화 하여, 일별 앱 사용 패턴의 Topic 도출
@@ -33,5 +33,5 @@ Result : [timestamp, package, Category]
 
   (file : Code/02.Feature Extraction/LDA_TopicModeling)
   
-- Graph
+- 💡 Graph
 
