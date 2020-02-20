@@ -34,7 +34,9 @@ Result : [timestamp, package, Category]
   * Communication 제거 or 채팅/SNS 분리
   
   🎑🍚Take a Rest : Cluster 1 & 7
+  
   📑Studying : Cluster 2 & 3 & 6
+  
   🎬Shopping : Cluster 4 & 5
 
   
