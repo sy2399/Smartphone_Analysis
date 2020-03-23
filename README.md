@@ -24,6 +24,7 @@ Result : [timestamp, package, Category]
   * count of each category in a day (Using categorized data)
   * transition count of category (Using categorized data)
   * duration of each category in a day (Using time_mapped data)
+  
 - 💡LDA
   * 유저의 앱 사용 기록을 카테고리화 (google-play store)
   * 유저의 일별 모든 앱 사용의 카테고리를 하나의 문서로 취급
@@ -33,12 +34,12 @@ Result : [timestamp, package, Category]
   (file : Code/02.Feature Extraction/LDA_TopicModeling)
   * Communication 제거 or 채팅/SNS 분리
   
-  🎑🍚Take a Rest : Cluster 1 & 7
+  🎑Take a Rest : Cluster 1 & 7
   
   📑Studying : Cluster 2 & 3 & 6
   
   🎬Shopping : Cluster 4 & 5
 
   
-- 💡 Graph
+- 💡 Graph-Network
 
