@@ -20,13 +20,13 @@ Result : [timestamp, package, Category]
 
 ## 3. Feature Extraction
 ### 3-1. App
-- Count, Freauency (file : Code/02.Feature Extraction/App_Features)
+- [x] Count, Freauency (file : Code/02.Feature Extraction/App_Features)
 
   * count of each category in a day (Using categorized data)
   * transition count of category (Using categorized data)
   * duration of each category in a day (Using time_mapped data)
   
-- 💡LDA (file : Code/02.Feature Extraction/LDA_TopicModeling)
+- [x] 💡LDA (file : Code/02.Feature Extraction/LDA_TopicModeling)
 
   * 유저의 앱 사용 기록을 카테고리화 (google-play store)
   * 유저의 일별 모든 앱 사용의 카테고리를 하나의 문서로 취급
@@ -40,5 +40,5 @@ Result : [timestamp, package, Category]
       - 🎬Shopping : Cluster 4 & 5
 
   
-- 💡 Graph-Network
+- [ ] 💡 Graph-Network
 
