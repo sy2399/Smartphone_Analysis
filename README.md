@@ -5,7 +5,7 @@ From smartphone data collection to modeling
 
 link : https://github.com/sy2399/ATM_Automated-Time-Management
 
-
+******
 ## 2. Data Preprocessing
 ### 2-1. App
 1. to Datetime
@@ -18,6 +18,7 @@ Result : [uid, date, stime, etime, packageName, Category]
 
 Result : [timestamp, package, Category]
 
+******
 ## 3. Feature Extraction
 ### 3-1. App
 - [x] Count, Freauency (file : Code/02.Feature Extraction/App_Features)
