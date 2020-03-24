@@ -12,11 +12,10 @@ link : https://github.com/sy2399/ATM_Automated-Time-Management
 2. Drop Background(e.g.,backround app - cashwalk) 
 3. App Categorizing (with Crawling)
 
-Result : [uid, date, stime, etime, packageName, Category]
+ - ***Result : [uid, date, stime, etime, packageName, Category]***
 
 4. Time Mapping : to count total duration of app usage
-
-Result : [timestamp, package, Category]
+ - ***Result : [timestamp, package, Category]***
 
 ******
 ## 3. Feature Extraction
