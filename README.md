@@ -42,3 +42,8 @@ link : https://github.com/sy2399/ATM_Automated-Time-Management
   
 - [ ] 💡 Graph-Network
 
+******
+## 4. Model
+### 4-1. SWB Trend Prediction
+### 4-2. Impulsiveness Level Prediction
+### 4-3. Stress Level Prediction
