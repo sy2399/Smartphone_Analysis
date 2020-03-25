@@ -20,7 +20,7 @@ link : https://github.com/sy2399/ATM_Automated-Time-Management
 ******
 ## 3. Feature Extraction
 ### 3-1. App
-- [x] Count, Freauency (file : Code/02.Feature Extraction/App_Features)
+- [x] Count, Frequency (file : Code/02.Feature Extraction/App_Features)
 
   * count of each category in a day (Using categorized data)
   * transition count of category (Using categorized data)
