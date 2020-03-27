@@ -22,7 +22,7 @@ link : https://github.com/sy2399/ATM_Automated-Time-Management
 
 ******
 ## 4. Model
-### 4-1. SWB Trend Prediction
+### 4-1. SWB Trend Prediction [Code Link](https://github.com/sy2399/Smartphone_Analysis/blob/master/Code/03.%20Modeling/00.%20Model%20Basic1_SWB.ipynb)
 - Purpose
   - (1) 삶의 만족도가 증가하는 시점, 감소하는 시점 파악
   - (2) 삶의 만족도가 증가할 때의 사용자 행동 패턴 파악
@@ -37,3 +37,9 @@ link : https://github.com/sy2399/ATM_Automated-Time-Management
 
 ### 4-2. Impulsiveness Level Prediction
 ### 4-3. Stress Level Prediction
+
+
+******
+## 5. Next Step
+- [ ] using GCN
+- [ ] using NLP
