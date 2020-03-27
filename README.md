@@ -1,9 +1,10 @@
 # Smartphone_Analysis
 From smartphone data collection to modeling
 
-## 1. Data Collection
+## 1. Data Collection : ATM [link](https://github.com/sy2399/ATM_Automated-Time-Management)
+- Smartphone Passive Sensing
+- EMA (Ecological Momentary Assessment)
 
-link : https://github.com/sy2399/ATM_Automated-Time-Management
 
 ******
 ## 2. Data Preprocessing
@@ -34,6 +35,9 @@ link : https://github.com/sy2399/ATM_Automated-Time-Management
 - Model 
   - [x] Simple : Randomforest, LogisticRegression, Adaboost
   - [ ] Best : LSTM
+
+- Paper : Rhim, S., Lee, U., & Han, K. (2020). Tracking and Modeling Subjective Well-Being Using Smartphone-Based Digital Phenotype. International Conference on User Modeling, Adaptation, and Personalization (UMAP), ACM. (acceptance rate: 23%)   
+
 
 ### 4-2. Impulsiveness Level Prediction
 ### 4-3. Stress Level Prediction
