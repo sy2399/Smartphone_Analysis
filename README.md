@@ -47,5 +47,5 @@ From smartphone data collection to modeling
 
 ******
 ## 5. Next Step
-- [ ] using GCN
-- [ ] using NLP
+- [ ] 💡using GCN
+- [ ] 💡using NLP
