@@ -57,8 +57,6 @@ From smartphone data collection to modeling
 - Paper : Rhim, S., Lee, U., & Han, K. (2020). Tracking and Modeling Subjective Well-Being Using Smartphone-Based Digital Phenotype. International Conference on User Modeling, Adaptation, and Personalization (UMAP), ACM. (acceptance rate: 23%)   
 
 
-### 4-2. Impulsiveness Level Prediction
-### 4-3. Stress Level Prediction
 
 
 ******
