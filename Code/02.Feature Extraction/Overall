@@ -1,0 +1,3434 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "#-*-coding:utf-8-*-\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Data Preprocessing"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 358,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "The watermark extension is already loaded. To reload it, use:\n",
+      "  %reload_ext watermark\n",
+      "CPython 3.6.1\n",
+      "IPython 5.3.0\n",
+      "\n",
+      "numpy 1.14.3\n",
+      "scipy 1.1.0\n",
+      "sklearn 0.19.0\n",
+      "pandas 0.23.4\n",
+      "matplotlib 2.0.2\n"
+     ]
+    }
+   ],
+   "source": [
+    "%load_ext watermark\n",
+    "%watermark -v -p numpy,scipy,sklearn,pandas,matplotlib"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 359,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "import numpy as np\n",
+    "import json\n",
+    "import objectpath\n",
+    "import csv\n",
+    "from datetime import datetime\n",
+    "from datetime import timedelta\n",
+    "from dateutil.parser import parse\n",
+    "import math\n",
+    "import dateutil\n",
+    "from datetime import date, datetime, time, timedelta\n",
+    "import json"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "User Id List"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 361,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "1DeL2E3y2JaTB5PqHHlZXdcNSfF3\n",
+      "2Mooxd1uOkSD1AixFEI8uFIQMmE3\n",
+      "2RTj8HjQjERchj1sNap8BEAe8d33\n",
+      "2zXMPviuTnUjrpdK0ZBPISBeJ972\n",
+      "46U7oVpwmXVkhJ84DjRwkjIkBXE2\n",
+      "541BR7WeqJQLESiOI9BCObeA2iG3\n",
+      "6wbsB6W1sCYknA96sJdHPbDcFEp1\n",
+      "7ofS29aGCeS26xm3T3tb3fQ86Br1\n",
+      "8WS9np2uofgyRpWyXRCpEuIsWBg2\n",
+      "8YbCSQEXW7b4jNPXQbm5yT5el1a2\n",
+      "94gz8LxGokeWdyCBo3huROqqV3U2\n",
+      "9XG2VHbktHN1umTW5MMUQWyLpwy1\n",
+      "AGXp0ud1nla8B81fUoXJp7nvfSN2\n",
+      "BbNTOUPIBPhY50NUH7mfUqXwm4z1\n",
+      "CwveK4fKgHXbBgGZm4sUrnZSaZZ2\n",
+      "ESJBb2eqtKYn8sBgSGOOH5VdAQC2\n",
+      "FGmDz1CAMCZ0w2dhujpXyBBm1LZ2\n",
+      "GHzmwZVpU5O5K0ixTzRj0YoBjy13\n",
+      "GZJyA3ruN4gd2UuXTr8mhPoYVQh1\n",
+      "GakIjZXtxUXHjoL0mvqZGGE4wp23\n",
+      "IEjZ6G7Y9ybiIA6T0VjzWluowDA3\n",
+      "JSaVEf4icUbMgOCBUbhSP18Xt0w1\n",
+      "KSj3d18SnKerriHxUbpHbRi9kBK2\n",
+      "LkdtwWELlgbrOMDMSjgxfyYQwo62\n",
+      "QDrqcNZlcsTXYIRUyE6xJ9Qd1zl2\n",
+      "Qra9u7rQNHV1AZTZXhHcMJ8wIAs2\n",
+      "QuYczEWOwgYggjK3Kmjinl6K0vz1\n",
+      "S45xvu9zcvYZeidGjGOBgXw3g6r1\n",
+      "TbkrARDiqAcChrxa0EuFFNx2WBq1\n",
+      "V3ZVgylQBtQtDRbRbVEZPyFKK6X2\n",
+      "VJfnskwl9CUe4Ckut2ZyIXhO9fm1\n",
+      "WlURqByaPyb77dmMSbCIqVtnlvw1\n",
+      "YKyiwuxE6fe77RWBQnz30ZOxEz62\n",
+      "YWiM1zImPQZgBze5lJCyE7ARwCW2\n",
+      "Yoo8ZEnIVkdk7CaHVdfRZ9YnKz72\n",
+      "Z4rhx6N6pOZICD2wiRQPNiBiD4m2\n",
+      "Zmx61D74q3dvRp9qilfKWIhWlAk1\n",
+      "bsy5KxBCW4hyIPeppvKpu82OOSY2\n",
+      "cDKzPAjcxOPWwwgl5pqPVxF4TIo2\n",
+      "dxBc3vgsAme5D8mLNBStDCUFXYA2\n",
+      "el9g7kFJKgMpCKQX4t60N2UdsGF2\n",
+      "fW8hnVG3WZVuTNYizgf2jBEWWhl2\n",
+      "gkefpZWP1oSsU0w22uHhRdQ0GiV2\n",
+      "h5n55e44a4cRP4VjOVXouJXRMdF2\n",
+      "hXPOb4kYLUScXfqCvLidmSjcHYb2\n",
+      "hhLmJ2PZ3KMMgd9044eUHQPGfU43\n",
+      "jmT9ZCHw9yRLeaTqugZHjgIXaxg2\n",
+      "lvjOuvRa96VcDF1pfRzf3xEhscx2\n",
+      "m8ntso7GgcdUpzWV2mGW9AuoSE32\n",
+      "nzJaQkcpcAPvzTYm1QumZ9A7zyr1\n",
+      "otfKOMf7VUaB5lxUARO0HNusxPB2\n",
+      "rHJfo8b3MkhXYse4uBiWAr3n7IV2\n",
+      "tm0bz2NkYnMPEbmLcUs3O5BFAc63\n",
+      "vrDemSg0kdMNnZgsXMLAFmQvTG93\n",
+      "wizLEwlbSKUAiaJ8dEW3pHP6FoU2\n",
+      "xEFm5EFLrbcBCjhPitiO6uGQTjy1\n"
+     ]
+    }
+   ],
+   "source": [
+    "#UID List\n",
+    "with open('C:/Users/USER/Desktop/Final/data/user.json', encoding='UTF8') as f:\n",
+    "    data = json.load(f)\n",
+    "    \n",
+    "user_list = [];\n",
+    "for h in data:\n",
+    "    user_list.append(h)\n",
+    "    print(h)\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## File"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 362,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "#File Directory\n",
+    "import os\n",
+    "\n",
+    "class FILE:\n",
+    "    def filelist(self, dirname):\n",
+    "        f_list = []\n",
+    "        try:\n",
+    "            filenames = os.listdir(dirname)\n",
+    "            for filename in filenames:\n",
+    "                name = os.path.join(dirname, filename)\n",
+    "                f_list.append(name)\n",
+    "        except:\n",
+    "            print(\"none\")\n",
+    "        return f_list\n",
+    "\n",
+    "    def search(self, dirname, data):\n",
+    "        csvs = []\n",
+    "       \n",
+    "        try:\n",
+    "            filenames = os.listdir(dirname)        \n",
+    "            for filename in filenames:\n",
+    "                full_filename = os.path.join(dirname, filename)\n",
+    "\n",
+    "                if data+ \".csv\" in full_filename:\n",
+    "                    #print(\"full\", full_filename)\n",
+    "                    csvs.append(full_filename)\n",
+    "        except:\n",
+    "            print(\"none\")\n",
+    "\n",
+    "        return csvs\n",
+    "    \n",
+    "    def make_df(self, data_file):\n",
+    "        df_all = pd.DataFrame()\n",
+    "        count = 0\n",
+    "        for dfile in data_file: \n",
+    "            if len(dfile) > 0:\n",
+    "                if count ==0:\n",
+    "                    df_all = pd.read_csv(dfile[0])   \n",
+    "                else:\n",
+    "                    tmp_all = pd.read_csv(dfile[0])   \n",
+    "                    df_all = pd.concat([df_all, tmp_all])\n",
+    "            count = count + 1\n",
+    "        return df_all\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## EMA"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 363,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "class EMA:\n",
+    "    def __init__(self):\n",
+    "        ema_df = pd.DataFrame()\n",
+    "        \n",
+    "\n",
+    "                \n",
+    "    def count_frequency(self,df,emas):\n",
+    "        #make unique ema list\n",
+    "        ema_result = []        \n",
+    "        ema_result.extend(emas)\n",
+    "        ema_result.extend(emas + \"_index\")\n",
+    "\n",
+    "        print(emas)\n",
+    "        for ema in ema_result:\n",
+    "            df[ema] = 0\n",
+    "            df[\"EMA\"] = \"\"\n",
+    "            for index, row in df.iterrows():\n",
+    "                #print(row[\"activity\"])\n",
+    "                if row[\"activity\"] == ema:\n",
+    "                    df.loc[(index), (ema)] = row[\"percent\"]/100\n",
+    "                    df.loc[(index), (ema + \"_index\")] = row[\"ema_index\"]\n",
+    "        \n",
+    "        ema_unique_index = emas + \"_index\" \n",
+    "        ema_result.extend(ema_unique_index)\n",
+    "        df = df.groupby(['uid','date','stime','etime'])[ema_result].sum().reset_index()\n",
+    "        \n",
+    "        # 활동 중 % 가 가장 높은 값으 EMA 값으로 활용\n",
+    "        df[\"EMA\"] = df[emas].idxmax(axis=1)\n",
+    "        return df[[\"uid\", \"stime\", \"etime\", \"EMA\"]]\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "all unique ema "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Activity"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 364,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "class ACTIVITY:\n",
+    "    def __init__(self):\n",
+    "        print(\"ACTIVITY Class\")     \n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Loaction"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 365,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "class LOCATION:\n",
+    "    def __init__(self):\n",
+    "        print(\"LOCATION Class\")\n",
+    "    \n",
+    "        "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 366,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "class APPLOG:\n",
+    "    def __init__(self):\n",
+    "        print(\"APPLOG Class\")\n",
+    "    "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Read File"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Read File"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 367,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "C:/Users/USER/Desktop/Final/data\\.DS_Store\n",
+      "none\n",
+      "C:/Users/USER/Desktop/Final/data\\1DeL2E3y2JaTB5PqHHlZXdcNSfF3\n",
+      "C:/Users/USER/Desktop/Final/data\\2zXMPviuTnUjrpdK0ZBPISBeJ972\n",
+      "C:/Users/USER/Desktop/Final/data\\6wbsB6W1sCYknA96sJdHPbDcFEp1\n",
+      "C:/Users/USER/Desktop/Final/data\\7ofS29aGCeS26xm3T3tb3fQ86Br1\n",
+      "C:/Users/USER/Desktop/Final/data\\8WS9np2uofgyRpWyXRCpEuIsWBg2\n",
+      "C:/Users/USER/Desktop/Final/data\\94gz8LxGokeWdyCBo3huROqqV3U2\n",
+      "C:/Users/USER/Desktop/Final/data\\9XG2VHbktHN1umTW5MMUQWyLpwy1\n",
+      "C:/Users/USER/Desktop/Final/data\\AGXp0ud1nla8B81fUoXJp7nvfSN2\n",
+      "C:/Users/USER/Desktop/Final/data\\bsy5KxBCW4hyIPeppvKpu82OOSY2\n",
+      "C:/Users/USER/Desktop/Final/data\\cDKzPAjcxOPWwwgl5pqPVxF4TIo2\n",
+      "C:/Users/USER/Desktop/Final/data\\CwveK4fKgHXbBgGZm4sUrnZSaZZ2\n",
+      "C:/Users/USER/Desktop/Final/data\\dxBc3vgsAme5D8mLNBStDCUFXYA2\n",
+      "C:/Users/USER/Desktop/Final/data\\el9g7kFJKgMpCKQX4t60N2UdsGF2\n",
+      "C:/Users/USER/Desktop/Final/data\\FGmDz1CAMCZ0w2dhujpXyBBm1LZ2\n",
+      "C:/Users/USER/Desktop/Final/data\\fW8hnVG3WZVuTNYizgf2jBEWWhl2\n",
+      "C:/Users/USER/Desktop/Final/data\\GakIjZXtxUXHjoL0mvqZGGE4wp23\n",
+      "C:/Users/USER/Desktop/Final/data\\GHzmwZVpU5O5K0ixTzRj0YoBjy13\n",
+      "C:/Users/USER/Desktop/Final/data\\gkefpZWP1oSsU0w22uHhRdQ0GiV2\n",
+      "C:/Users/USER/Desktop/Final/data\\GZJyA3ruN4gd2UuXTr8mhPoYVQh1\n",
+      "C:/Users/USER/Desktop/Final/data\\hhLmJ2PZ3KMMgd9044eUHQPGfU43\n",
+      "C:/Users/USER/Desktop/Final/data\\hXPOb4kYLUScXfqCvLidmSjcHYb2\n",
+      "C:/Users/USER/Desktop/Final/data\\IEjZ6G7Y9ybiIA6T0VjzWluowDA3\n",
+      "C:/Users/USER/Desktop/Final/data\\JSaVEf4icUbMgOCBUbhSP18Xt0w1\n",
+      "C:/Users/USER/Desktop/Final/data\\KSj3d18SnKerriHxUbpHbRi9kBK2\n",
+      "C:/Users/USER/Desktop/Final/data\\LkdtwWELlgbrOMDMSjgxfyYQwo62\n",
+      "C:/Users/USER/Desktop/Final/data\\m8ntso7GgcdUpzWV2mGW9AuoSE32\n",
+      "C:/Users/USER/Desktop/Final/data\\nzJaQkcpcAPvzTYm1QumZ9A7zyr1\n",
+      "C:/Users/USER/Desktop/Final/data\\otfKOMf7VUaB5lxUARO0HNusxPB2\n",
+      "C:/Users/USER/Desktop/Final/data\\Qra9u7rQNHV1AZTZXhHcMJ8wIAs2\n",
+      "C:/Users/USER/Desktop/Final/data\\QuYczEWOwgYggjK3Kmjinl6K0vz1\n",
+      "C:/Users/USER/Desktop/Final/data\\rHJfo8b3MkhXYse4uBiWAr3n7IV2\n",
+      "C:/Users/USER/Desktop/Final/data\\S45xvu9zcvYZeidGjGOBgXw3g6r1\n",
+      "C:/Users/USER/Desktop/Final/data\\TbkrARDiqAcChrxa0EuFFNx2WBq1\n",
+      "C:/Users/USER/Desktop/Final/data\\tm0bz2NkYnMPEbmLcUs3O5BFAc63\n",
+      "C:/Users/USER/Desktop/Final/data\\user.json\n",
+      "none\n",
+      "C:/Users/USER/Desktop/Final/data\\V3ZVgylQBtQtDRbRbVEZPyFKK6X2\n",
+      "C:/Users/USER/Desktop/Final/data\\VJfnskwl9CUe4Ckut2ZyIXhO9fm1\n",
+      "C:/Users/USER/Desktop/Final/data\\vrDemSg0kdMNnZgsXMLAFmQvTG93\n",
+      "C:/Users/USER/Desktop/Final/data\\wizLEwlbSKUAiaJ8dEW3pHP6FoU2\n",
+      "C:/Users/USER/Desktop/Final/data\\WlURqByaPyb77dmMSbCIqVtnlvw1\n",
+      "C:/Users/USER/Desktop/Final/data\\xEFm5EFLrbcBCjhPitiO6uGQTjy1\n",
+      "C:/Users/USER/Desktop/Final/data\\YKyiwuxE6fe77RWBQnz30ZOxEz62\n",
+      "C:/Users/USER/Desktop/Final/data\\Yoo8ZEnIVkdk7CaHVdfRZ9YnKz72\n",
+      "C:/Users/USER/Desktop/Final/data\\Zmx61D74q3dvRp9qilfKWIhWlAk1\n",
+      "45\n"
+     ]
+    }
+   ],
+   "source": [
+    "file_obj = FILE()\n",
+    "\n",
+    "file_list = []\n",
+    "file_list = file_obj.filelist('C:/Users/USER/Desktop/Final/data')\n",
+    "\n",
+    "ema_csv_list = []\n",
+    "\n",
+    "for file in file_list:\n",
+    "    print(file)\n",
+    "    user_csv = file_obj.search(file, \"EMA\")\n",
+    "    ema_csv_list.append(user_csv)\n",
+    "\n",
+    "    \n",
+    "print(len(ema_csv_list))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "EMA Dataframe"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 368,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(2144, 10)"
+      ]
+     },
+     "execution_count": 368,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "file_obj = FILE()\n",
+    "\n",
+    "ema_df = pd.DataFrame()\n",
+    "ema_df = file_obj.make_df(ema_csv_list)\n",
+    "ema_df.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 370,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "['공부/과제' '수면' '게임(폰)' '문화생활' '수업' '알바' '안과검진' '수다' '식사/음주' '집안일(청소/빨래)'\n",
+      " '쇼핑' '웹툰 폰으로' '운동/산책' '그냥 휴대폰' '휴대폰' '파란학기 성과발표회' '웹툰' '인터넷 서핑' '휴식'\n",
+      " '장보기' '전화' '동아리활동' '가족모임' '게임(PC)' '교회' '유튜브영상시청' '씻기' '실습' '유튜브시청'\n",
+      " '학생회회의' '세미나' '컴퓨터 정리' '군대 지원 조사' ' 수다' '유튜브' '군대지원' '기타 행위' '짐 정리'\n",
+      " '미디어데이 준비' '목욕' '휴대폰으로 웹툰봄' '티비시청' '쉬는 시간' '세면' '일' '병문안' '과제 계획' '버스'\n",
+      " '봉사' '대중교통' '폰만지기' '폰' '실험참가' '샤워' '체스' '어플삭제 후 다시다운로드...' '기숙사 ' '병원'\n",
+      " '촬영' '세안 및 수면준비' '외출준비' '학생회 회의' 'sns' '퍼즐' '학교갈준비' '학교갈 준비' '노래방' '준비'\n",
+      " '외출 준비' '학과 멘토링 진행' '학과 소개 멘토링' '멍때리기' '미용' '씻기.휴식' '상담' '설명회' '식사' '조모임'\n",
+      " '자유시간' '팀플' '잘 준비' '학교 행사참여' '컴퓨터 등' ' 나갈 준비' '이동' '통학' '행정근로' '과제'\n",
+      " '나갈준비' '회의' '종강총회' '중고거래']\n"
+     ]
+    }
+   ],
+   "source": [
+    "ema_obj = EMA()\n",
+    "\n",
+    "ema_unique_list =  pd.unique(ema_df[\"activity\"])\n",
+    "\n",
+    "ema_count_df = ema_obj.count_frequency(ema_df, ema_unique_list)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 371,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(1589, 4)"
+      ]
+     },
+     "execution_count": 371,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "ema_count_df.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 372,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>uid</th>\n",
+       "      <th>stime</th>\n",
+       "      <th>etime</th>\n",
+       "      <th>EMA</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1DeL2E3y2JaTB5PqHHlZXdcNSfF3</td>\n",
+       "      <td>2018-12-02 17:20:06</td>\n",
+       "      <td>2018-12-02 18:12:43</td>\n",
+       "      <td>수면</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1DeL2E3y2JaTB5PqHHlZXdcNSfF3</td>\n",
+       "      <td>2018-12-03 00:00:00</td>\n",
+       "      <td>2018-12-03 08:55:04</td>\n",
+       "      <td>수업</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>1DeL2E3y2JaTB5PqHHlZXdcNSfF3</td>\n",
+       "      <td>2018-12-03 13:44:07</td>\n",
+       "      <td>2018-12-03 14:44:33</td>\n",
+       "      <td>수면</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>1DeL2E3y2JaTB5PqHHlZXdcNSfF3</td>\n",
+       "      <td>2018-12-03 13:44:07</td>\n",
+       "      <td>2018-12-03 15:05:09</td>\n",
+       "      <td>수면</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1DeL2E3y2JaTB5PqHHlZXdcNSfF3</td>\n",
+       "      <td>2018-12-03 16:01:59</td>\n",
+       "      <td>2018-12-03 17:23:48</td>\n",
+       "      <td>수면</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                            uid                stime                etime EMA\n",
+       "0  1DeL2E3y2JaTB5PqHHlZXdcNSfF3  2018-12-02 17:20:06  2018-12-02 18:12:43  수면\n",
+       "1  1DeL2E3y2JaTB5PqHHlZXdcNSfF3  2018-12-03 00:00:00  2018-12-03 08:55:04  수업\n",
+       "2  1DeL2E3y2JaTB5PqHHlZXdcNSfF3  2018-12-03 13:44:07  2018-12-03 14:44:33  수면\n",
+       "3  1DeL2E3y2JaTB5PqHHlZXdcNSfF3  2018-12-03 13:44:07  2018-12-03 15:05:09  수면\n",
+       "4  1DeL2E3y2JaTB5PqHHlZXdcNSfF3  2018-12-03 16:01:59  2018-12-03 17:23:48  수면"
+      ]
+     },
+     "execution_count": 372,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "ema_count_df.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 373,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "43"
+      ]
+     },
+     "execution_count": 373,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(set(ema_count_df[\"uid\"]))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 374,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(2144, 195)"
+      ]
+     },
+     "execution_count": 374,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "ema_df.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 375,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "43"
+      ]
+     },
+     "execution_count": 375,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(set(ema_df[\"uid\"]))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Activity Dataframe"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 376,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "none\n",
+      "none\n",
+      "45\n"
+     ]
+    }
+   ],
+   "source": [
+    "file_obj = FILE()\n",
+    "\n",
+    "file_list = []\n",
+    "file_list = file_obj.filelist('C:/Users/USER/Desktop/Final/data')\n",
+    "\n",
+    "activity_csv_list = []\n",
+    "\n",
+    "for file in file_list:\n",
+    "    activity_csv = file_obj.search(file, \"ACTIVITY\")\n",
+    "    activity_csv_list.append(activity_csv)\n",
+    "\n",
+    "    \n",
+    "print(len(ema_csv_list))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 377,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "activity_df = pd.DataFrame()\n",
+    "activity_df = file_obj.make_df(activity_csv_list)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 378,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(5887, 9)"
+      ]
+     },
+     "execution_count": 378,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "activity_df.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 379,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "43"
+      ]
+     },
+     "execution_count": 379,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(set(activity_df[\"uid\"]))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Location Dataframe"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 380,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "none\n",
+      "none\n",
+      "45\n"
+     ]
+    }
+   ],
+   "source": [
+    "file_obj = FILE()\n",
+    "\n",
+    "file_list = []\n",
+    "file_list = file_obj.filelist('C:/Users/USER/Desktop/Final/data')\n",
+    "\n",
+    "location_csv_list = []\n",
+    "\n",
+    "for file in file_list:\n",
+    "    loc_csv = file_obj.search(file, \"LOCATION\")\n",
+    "    location_csv_list.append(loc_csv)\n",
+    "    \n",
+    "print(len(location_csv_list))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 381,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "location_df = pd.DataFrame()\n",
+    "location_df = file_obj.make_df(location_csv_list)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 382,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>_id</th>\n",
+       "      <th>uid</th>\n",
+       "      <th>date</th>\n",
+       "      <th>time</th>\n",
+       "      <th>latitude</th>\n",
+       "      <th>longitude</th>\n",
+       "      <th>poiName</th>\n",
+       "      <th>addrName</th>\n",
+       "      <th>radius</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1</td>\n",
+       "      <td>2zXMPviuTnUjrpdK0ZBPISBeJ972</td>\n",
+       "      <td>2018-12-02</td>\n",
+       "      <td>2018-12-02 22:09:19</td>\n",
+       "      <td>37.560431</td>\n",
+       "      <td>126.964972</td>\n",
+       "      <td>지피씨</td>\n",
+       "      <td>서울 서대문구 충정로3가</td>\n",
+       "      <td>0.02</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>2</td>\n",
+       "      <td>2zXMPviuTnUjrpdK0ZBPISBeJ972</td>\n",
+       "      <td>2018-12-03</td>\n",
+       "      <td>2018-12-03 10:19:23</td>\n",
+       "      <td>37.593297</td>\n",
+       "      <td>127.055467</td>\n",
+       "      <td>서울 동대문구 회기로23다길</td>\n",
+       "      <td>서울 동대문구 회기동</td>\n",
+       "      <td>0.03</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>3</td>\n",
+       "      <td>2zXMPviuTnUjrpdK0ZBPISBeJ972</td>\n",
+       "      <td>2018-12-03</td>\n",
+       "      <td>2018-12-03 12:00:14</td>\n",
+       "      <td>37.593508</td>\n",
+       "      <td>127.055375</td>\n",
+       "      <td>경희고등학교 후문</td>\n",
+       "      <td>서울 동대문구 이문동</td>\n",
+       "      <td>0.03</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>4</td>\n",
+       "      <td>2zXMPviuTnUjrpdK0ZBPISBeJ972</td>\n",
+       "      <td>2018-12-03</td>\n",
+       "      <td>2018-12-03 13:24:48</td>\n",
+       "      <td>37.593508</td>\n",
+       "      <td>127.055375</td>\n",
+       "      <td>경희고등학교 후문</td>\n",
+       "      <td>서울 동대문구 이문동</td>\n",
+       "      <td>0.03</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>5</td>\n",
+       "      <td>2zXMPviuTnUjrpdK0ZBPISBeJ972</td>\n",
+       "      <td>2018-12-03</td>\n",
+       "      <td>2018-12-03 13:26:52</td>\n",
+       "      <td>37.593898</td>\n",
+       "      <td>127.054803</td>\n",
+       "      <td>시네마DVD</td>\n",
+       "      <td>서울 동대문구 회기동</td>\n",
+       "      <td>0.01</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "  _id                           uid        date                 time  \\\n",
+       "0   1  2zXMPviuTnUjrpdK0ZBPISBeJ972  2018-12-02  2018-12-02 22:09:19   \n",
+       "1   2  2zXMPviuTnUjrpdK0ZBPISBeJ972  2018-12-03  2018-12-03 10:19:23   \n",
+       "2   3  2zXMPviuTnUjrpdK0ZBPISBeJ972  2018-12-03  2018-12-03 12:00:14   \n",
+       "3   4  2zXMPviuTnUjrpdK0ZBPISBeJ972  2018-12-03  2018-12-03 13:24:48   \n",
+       "4   5  2zXMPviuTnUjrpdK0ZBPISBeJ972  2018-12-03  2018-12-03 13:26:52   \n",
+       "\n",
+       "    latitude   longitude          poiName       addrName  radius  \n",
+       "0  37.560431  126.964972              지피씨  서울 서대문구 충정로3가    0.02  \n",
+       "1  37.593297  127.055467  서울 동대문구 회기로23다길    서울 동대문구 회기동    0.03  \n",
+       "2  37.593508  127.055375        경희고등학교 후문    서울 동대문구 이문동    0.03  \n",
+       "3  37.593508  127.055375        경희고등학교 후문    서울 동대문구 이문동    0.03  \n",
+       "4  37.593898  127.054803           시네마DVD    서울 동대문구 회기동    0.01  "
+      ]
+     },
+     "execution_count": 382,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "location_df.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(86, 9)"
+      ]
+     },
+     "execution_count": 25,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "location_df.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 383,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'3번가포차',\n",
+       " '47th에비뉴',\n",
+       " '59쌀피자 수원아주대점',\n",
+       " 'AUTOZONE',\n",
+       " 'BB텔레콤',\n",
+       " 'BJ+153실용음악학원',\n",
+       " 'Bubble Bubble',\n",
+       " 'CU 경기대학교제2복지관점',\n",
+       " 'CU 경희대정문점',\n",
+       " 'CU 영통호원점',\n",
+       " 'CU 영통화수분점',\n",
+       " 'CU 용인서천점',\n",
+       " 'CU 우만원룸점',\n",
+       " 'F.M',\n",
+       " 'GS25 경희대기숙사점',\n",
+       " 'GS25 독산정심점',\n",
+       " 'GS25 수원본',\n",
+       " 'GS25 아주프라자',\n",
+       " 'GS25 우만파크점',\n",
+       " 'GS25 위례성산점',\n",
+       " 'G건축인테리어',\n",
+       " 'KAC한국예술원',\n",
+       " 'KEB하나은행 경희대국제캠퍼스출장소',\n",
+       " 'KEB하나은행 경희대출장소',\n",
+       " 'KEB하나은행 수원지점',\n",
+       " 'KFC 아주대점',\n",
+       " 'LG전자서비스센터 원천분점 정문',\n",
+       " 'LS니꼬동제련 서울사무소',\n",
+       " 'SC제일은행 아주대학교출장소',\n",
+       " 'T World 원천직영점',\n",
+       " '가경메디칼',\n",
+       " '가마로강정 광교신도시점',\n",
+       " '가보정갈비 3관',\n",
+       " '갓식빵 수원아주대점',\n",
+       " '갓포모리[일식]',\n",
+       " '강성신법률사무소',\n",
+       " '강호동678치킨',\n",
+       " '개판5분전',\n",
+       " '경기 수원시 영통구 영일로6번길',\n",
+       " '경기 수원시 영통구 청명로21번길',\n",
+       " '경기 수원시 팔달구 아주로',\n",
+       " '경기 수원시 팔달구 아주로27번길',\n",
+       " '경기 용인시 기흥구 서그내로62번길',\n",
+       " '경기 의정부시 흥선로5번길',\n",
+       " '경기대학교 성신관',\n",
+       " '경기대학교 육영관',\n",
+       " '경희고등학교 후문',\n",
+       " '경희대구내안경원',\n",
+       " '경희대학교 공학관',\n",
+       " '경희대학교 공학관 주차장',\n",
+       " '경희대학교 국제캠퍼스 주차장',\n",
+       " '경희대학교 글로벌미래교육원',\n",
+       " '경희대학교 네오르네상스관',\n",
+       " '경희대학교 노천극장',\n",
+       " '경희대학교 대운동장',\n",
+       " '경희대학교 대학본부',\n",
+       " '경희대학교 멀티미디어교육관',\n",
+       " '경희대학교 서울캠퍼스 후문',\n",
+       " '경희대학교 선승관',\n",
+       " '경희대학교 스페이스21',\n",
+       " '경희대학교 외국어대학관',\n",
+       " '경희대학교 우정원',\n",
+       " '경희대학교 의과대학',\n",
+       " '경희대학교 전자정보대학관',\n",
+       " '경희대학교 정경대학',\n",
+       " '경희대학교 중앙도서관',\n",
+       " '경희대학교 중앙도서관 주차장',\n",
+       " '경희대학교 청운관',\n",
+       " '경희대학교 한의과대학',\n",
+       " '경희대학교 행복기숙사A',\n",
+       " '고등어쌈치네',\n",
+       " '골드공인중개사사무소',\n",
+       " '곱창고 아주대점',\n",
+       " '공중화장실제3체육공원',\n",
+       " '곽만근갈비탕 광교점',\n",
+       " '광교수리마을아파트',\n",
+       " '광교씨엠타워 정문',\n",
+       " '광교자연앤힐스테이트아파트 5412동',\n",
+       " '광명주택',\n",
+       " '국민자동차매매상사',\n",
+       " '국수나무 용인동천점',\n",
+       " '국화동',\n",
+       " '그라찌에 경기대기숙사점',\n",
+       " '그랑쇼콜라',\n",
+       " '그릴롤즈',\n",
+       " '기아Auto Q서비스 밀코동수원서비스',\n",
+       " '김밥속으로 영통1호점',\n",
+       " '꼬꼬맘치킨 경희직영점',\n",
+       " '꾸미지오디자인',\n",
+       " '끌림 cclim',\n",
+       " '나라스톤',\n",
+       " '나비네일',\n",
+       " '나우아트빌',\n",
+       " '나이스빌',\n",
+       " '남산핏자',\n",
+       " '남서울힐스테이트아파트 206동',\n",
+       " '남양빌라',\n",
+       " '넓은들',\n",
+       " '넥스트홀딩스',\n",
+       " '놀숲 경희대점',\n",
+       " '놀숲 아주대점',\n",
+       " '뉴발란스키즈 수원영통복합관점',\n",
+       " '뉴욕야시장 아주대점',\n",
+       " '늘푸른안마원',\n",
+       " '다사리아 주차장',\n",
+       " '다산관스넥',\n",
+       " '다이산지수원영통점',\n",
+       " '대우부천정비사업소',\n",
+       " '대운',\n",
+       " '대한적십자사 대구,경북혈액원 주차장2',\n",
+       " '댕기머리이발관',\n",
+       " '도모다찌 경희대점',\n",
+       " '동광빌라',\n",
+       " '동문뱅크공인중개사',\n",
+       " '동서아카데미빌딩',\n",
+       " '두산빌라',\n",
+       " '두샵',\n",
+       " '따끼압',\n",
+       " '뚜레쥬르 광교래미안',\n",
+       " '럭셔리노래연습장',\n",
+       " '레알마요',\n",
+       " '렉스',\n",
+       " '렌즈타운 아주대점',\n",
+       " '르노삼성정비 영통정비사업소',\n",
+       " '마이즈텍',\n",
+       " '만현마을성원상떼빌3단지아파트 301동',\n",
+       " '만현마을성원상떼빌3단지아파트 303동',\n",
+       " '맘스터치 수원아주대점',\n",
+       " '맥도날드 경희대국제캠퍼스점',\n",
+       " '맥도날드 수원아주대 주차장',\n",
+       " '메가플러스오피스텔',\n",
+       " '메드윌병원',\n",
+       " '메디톡스광교R&D센터 정문',\n",
+       " '멕코이통닭',\n",
+       " '명동성당앞[교차로]',\n",
+       " '명산원룸',\n",
+       " '명성공인중개사사무소',\n",
+       " '명인주택',\n",
+       " '모은넷',\n",
+       " '모임',\n",
+       " '무지개마을제일아파트 802동',\n",
+       " '무지개마을제일아파트 803동방면입구',\n",
+       " '물레방아',\n",
+       " '물산업지원센터',\n",
+       " '미각 수원아주대점',\n",
+       " '미누림',\n",
+       " '미라이통역학원',\n",
+       " '미미스토리',\n",
+       " '미쳐버린파닭 경희대점',\n",
+       " '민속건강원',\n",
+       " '밀플랜비 아주대점',\n",
+       " '백두산유통',\n",
+       " '백운당',\n",
+       " '백한원룸',\n",
+       " '베스트원',\n",
+       " '베아르시 수원영통점',\n",
+       " '벨리스플라워',\n",
+       " '보글보글찌개백반[한식]',\n",
+       " '보배피부관리',\n",
+       " '본도시락 수원아주대점 정문',\n",
+       " '본죽 수원경희대점',\n",
+       " '봉대박스파게티 아주대점',\n",
+       " '부대통령 뚝배기',\n",
+       " '부산어묵',\n",
+       " '뷰티플치과기공소',\n",
+       " '비즈스튜디오',\n",
+       " '비츠',\n",
+       " '빈폴악세서리 코엑스몰BE점',\n",
+       " '빛나리어린이집',\n",
+       " '빨간집포차',\n",
+       " '산전수전파전',\n",
+       " '산정',\n",
+       " '살롱드본',\n",
+       " '삼성모바일스토어 아주대병원수원점',\n",
+       " '삼원식품',\n",
+       " '삼원정밀',\n",
+       " '상현마을현대성우1차아파트 정문',\n",
+       " '서경삼거리[교차로]',\n",
+       " '서울 동대문구 회기로23다길',\n",
+       " '서울가든아파트',\n",
+       " '서천초교삼거리[교차로]',\n",
+       " '서천초등학교',\n",
+       " '석산주택',\n",
+       " '선경도서관 주차장',\n",
+       " '설빙 아주대점',\n",
+       " '성진철물건재',\n",
+       " '세븐일레븐 수원영통점',\n",
+       " '세빈스킨케어',\n",
+       " '세일안경',\n",
+       " '센스빌',\n",
+       " '소간지',\n",
+       " '소고[일식]',\n",
+       " '소유케이크',\n",
+       " '수서역 3번출구',\n",
+       " '수원교구유지재단',\n",
+       " '수원시궁도장',\n",
+       " '수원시청소년재단',\n",
+       " '수원충만교회',\n",
+       " '수원하나교회',\n",
+       " '수원한국병원',\n",
+       " '수지공인중개사무소',\n",
+       " '수지삼성래미안4차아파트',\n",
+       " '수지삼성래미안4차아파트 102동',\n",
+       " '수철이네왕새우튀김 아주대점',\n",
+       " '스위티두',\n",
+       " '스쿨룩스 청량리점',\n",
+       " '스타벅스 동수원DT점',\n",
+       " '스타벅스 아주대점',\n",
+       " '스톤헨지',\n",
+       " '승지빌딩',\n",
+       " '시골보신탕',\n",
+       " '시네마DVD',\n",
+       " '신맵당 홍대점',\n",
+       " '신설동역 6번출구',\n",
+       " '신스커피하우스',\n",
+       " '신토리할매국밥',\n",
+       " '써니스톤',\n",
+       " '써클',\n",
+       " '썬더치킨',\n",
+       " '아디다스 북수원홈플러스',\n",
+       " '아디엘',\n",
+       " '아록빌딩',\n",
+       " '아롤도그 아주대점',\n",
+       " '아리따움 광교아브뉴프랑점 정문',\n",
+       " '아리따움 아주대점',\n",
+       " '아리아 치킨',\n",
+       " '아메리칸 필리스',\n",
+       " '아웃닭 아주대점',\n",
+       " '아이뜨락어린이집',\n",
+       " '아이보리',\n",
+       " '아이젤',\n",
+       " '아이타워공인중개사',\n",
+       " '아인빌딩',\n",
+       " '아저씨포차앤사케',\n",
+       " '아주대정문삼거리[교차로]',\n",
+       " '아주대학교',\n",
+       " '아주대학교 교육대학원',\n",
+       " '아주대학교 국제학사',\n",
+       " '아주대학교 기숙사식당',\n",
+       " '아주대학교 남제관',\n",
+       " '아주대학교 다산관',\n",
+       " '아주대학교 대운동장',\n",
+       " '아주대학교 더테라스',\n",
+       " '아주대학교 동관',\n",
+       " '아주대학교 북문',\n",
+       " '아주대학교 산학협력원',\n",
+       " '아주대학교 선구자상',\n",
+       " '아주대학교 송재관 정문',\n",
+       " '아주대학교 약학관',\n",
+       " '아주대학교 용지관',\n",
+       " '아주대학교 원천관',\n",
+       " '아주대학교 원천정보관',\n",
+       " '아주대학교 율곡관',\n",
+       " '아주대학교 의과대학임상수기센터',\n",
+       " '아주대학교 의생명과학관',\n",
+       " '아주대학교 정문',\n",
+       " '아주대학교 제1학생회관',\n",
+       " '아주대학교 제2학생회관',\n",
+       " '아주대학교 중앙도서관',\n",
+       " '아주대학교 홍재관',\n",
+       " '아주대학교 화홍관',\n",
+       " '아주대학교병원 건강증진센터',\n",
+       " '아주대학교병원제2주차빌딩',\n",
+       " '아주대학교우체국',\n",
+       " '알엔에이',\n",
+       " '알파문구 경기대점',\n",
+       " '앙띠베베어린이집',\n",
+       " '얌샘김밥 아주대점',\n",
+       " '양반가',\n",
+       " '어쭈꾸미',\n",
+       " '엉클토이',\n",
+       " '에이플러스공인',\n",
+       " '에코리더',\n",
+       " '에코원',\n",
+       " '연세웰키즈치과의원',\n",
+       " '영락밀알유치원',\n",
+       " '영상노래방',\n",
+       " '영통교동짬뽕[중식]',\n",
+       " '영통목우미술학원',\n",
+       " '영통식당',\n",
+       " '영통영락교회',\n",
+       " '예쁜아이들피아노',\n",
+       " '예스보석사우나',\n",
+       " '예스보석사우나 주차장',\n",
+       " '옛맛언양불고기',\n",
+       " '오닭꼬치 아주대점',\n",
+       " '오리지널시카고피자 강남역점',\n",
+       " '오봉자싸롱 수원영통점',\n",
+       " '오븐에빠진닭 경희대점',\n",
+       " '오산세교쌍용예가아파트',\n",
+       " '오에스티 아주대점',\n",
+       " '오징어세상',\n",
+       " '용답역[2호선]',\n",
+       " '용당구클럽',\n",
+       " '용두치안센터',\n",
+       " '우리금융지주 후문',\n",
+       " '우리동네 주식회사',\n",
+       " '우리산곰장어',\n",
+       " '우리오피스텔',\n",
+       " '우만동R타워',\n",
+       " '우만동족발집',\n",
+       " '우만세탁소',\n",
+       " '우만주공1단지아파트',\n",
+       " '원진빌딩',\n",
+       " '원천주공1단지아파트 103동',\n",
+       " '원천주공1단지아파트 105동',\n",
+       " '원천주공1단지아파트 106동',\n",
+       " '원풀빨래방',\n",
+       " '원프로교육학원',\n",
+       " '월드메르디앙아파트 111동',\n",
+       " '유가네닭갈비 수원아주대점',\n",
+       " '유디엠텍',\n",
+       " '유진욱가요교실',\n",
+       " '육쌈냉면 한국외대점',\n",
+       " '은하수어린이집',\n",
+       " '이가네솥뚜껑삼겹살 위례점',\n",
+       " '이남장 아주대점',\n",
+       " '이니스프리 아주대점',\n",
+       " '이디야커피 수원북문점',\n",
+       " '이마트24 상현주공점',\n",
+       " '이문1치안센터',\n",
+       " '이문동아이비리그오피스텔',\n",
+       " '이미지치과의원',\n",
+       " '이자카야선영 지하주차장',\n",
+       " '이태리안경아주대점',\n",
+       " '인계안골사거리[교차로]',\n",
+       " '인근주민 아주대점',\n",
+       " '인디오븐 미금행복점',\n",
+       " '일류세탁소',\n",
+       " '일신부동산',\n",
+       " '임마누엘교회',\n",
+       " '자금성 세류점[중식]',\n",
+       " '자이소망공인중개사사무소',\n",
+       " '장오스포츠&바디케어',\n",
+       " '전원교회',\n",
+       " '정성세탁소',\n",
+       " '정인석마취통증의학과의원 정문',\n",
+       " '정훈빌라',\n",
+       " '제이제이헤어팀',\n",
+       " '주왕1급자동차정비공장',\n",
+       " '쥬닉',\n",
+       " '쥬스스타 경희대점',\n",
+       " '쥬씨 상상마당점',\n",
+       " '쥬씨 아주대점',\n",
+       " '쥬크라',\n",
+       " '즐거운노래방',\n",
+       " '지게와작대기',\n",
+       " '지노스빤쩨로띠 아주대점',\n",
+       " '지피씨',\n",
+       " '진영빌라',\n",
+       " '집현전고시원',\n",
+       " '짠',\n",
+       " '짬뽕타임 경기대점[중식]',\n",
+       " '책과영화휴 이문점',\n",
+       " '천보빌라',\n",
+       " '청주노동인권센터',\n",
+       " '촌장골생고기',\n",
+       " '최일규정형외과의원',\n",
+       " '춘천꼬꼬닭갈비',\n",
+       " '치킨매니아 상현1호점',\n",
+       " '카페베네 아주대정문점',\n",
+       " '카페서천',\n",
+       " '캠브리지빌딩 주차장',\n",
+       " '캠퍼스부동산 주차장',\n",
+       " '캠퍼스프라자',\n",
+       " '커브스 광교클럽',\n",
+       " '커피에반하다 성남위례점',\n",
+       " '코리아에어콘',\n",
+       " '코리안바베큐 캐슬점',\n",
+       " '퀸스애비뉴',\n",
+       " '크로커다일 동탄점',\n",
+       " '크리쉬나건강센터',\n",
+       " '크린토피아 용인서천점',\n",
+       " '큰나래유치원',\n",
+       " '클럽클리오 올리브영아주대점',\n",
+       " '키브한 아주대점',\n",
+       " '키클아이',\n",
+       " '킹노래연습장',\n",
+       " '탐앤탐스 수원경희대점',\n",
+       " '탐앤탐스 수원아주대점',\n",
+       " '탐호프레스토랑',\n",
+       " '태영리얼티에이젼트',\n",
+       " '태장감리교회',\n",
+       " '태화전기',\n",
+       " '파란PC방',\n",
+       " '파리바게뜨 아주대점',\n",
+       " '파스타앤그릴',\n",
+       " '파인컨설팅',\n",
+       " '파토즈',\n",
+       " '팔달관스넥',\n",
+       " '팔라디움 롯데백화점본점',\n",
+       " '평익개발',\n",
+       " '평화의동산',\n",
+       " '포교당',\n",
+       " '포메인 아주대점',\n",
+       " '포스넷',\n",
+       " '포커스원',\n",
+       " '푸오코',\n",
+       " '프라임비즈니스유닛',\n",
+       " '프라임주얼리 수원점',\n",
+       " '프렌드빌',\n",
+       " '프리프리피자',\n",
+       " '플라타너스에프엔씨',\n",
+       " '피탕김탕',\n",
+       " '필동약수터',\n",
+       " '하이리빙 수원프라자',\n",
+       " '하회마을시즌투',\n",
+       " '한스 수원인계점',\n",
+       " '해듬빌',\n",
+       " '해뜨는어린이집',\n",
+       " '해주면가 정문',\n",
+       " '해피홈타운',\n",
+       " '헤어다이아 아주대점',\n",
+       " '헤어숲',\n",
+       " '현경 수원아주대점[중식]',\n",
+       " '현대2차맨션',\n",
+       " '현대마트',\n",
+       " '현대성우부동산',\n",
+       " '현대세탁소',\n",
+       " '홍대입구역',\n",
+       " '홍선생미술용인 수지지사',\n",
+       " '화랑',\n",
+       " '횡단보도2',\n",
+       " '효성ATM GS25경희대기숙사점',\n",
+       " '효성ATM LG25수원경희점',\n",
+       " '후퉁리[중식]',\n",
+       " '휘경뮤엠영어교습소'}"
+      ]
+     },
+     "execution_count": 383,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "set(location_df[\"poiName\"])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "APPLOG Dataframe"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 384,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "none\n",
+      "none\n",
+      "45\n"
+     ]
+    }
+   ],
+   "source": [
+    "file_obj = FILE()\n",
+    "\n",
+    "file_list = []\n",
+    "file_list = file_obj.filelist('C:/Users/USER/Desktop/Final/data')\n",
+    "\n",
+    "app_csv_list = []\n",
+    "\n",
+    "for file in file_list:\n",
+    "    app_csv = file_obj.search(file, \"APP\")\n",
+    "    app_csv_list.append(app_csv)\n",
+    "    \n",
+    "print(len(app_csv_list))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 385,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "app_df = pd.DataFrame()\n",
+    "app_df = file_obj.make_df(app_csv_list)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 386,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(455254, 9)"
+      ]
+     },
+     "execution_count": 386,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "app_df.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 387,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "#drop nan\n",
+    "app_df_delete_nan = app_df.dropna()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 388,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(87499, 9)"
+      ]
+     },
+     "execution_count": 388,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "app_df_delete_nan.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 389,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>_id</th>\n",
+       "      <th>uid</th>\n",
+       "      <th>date</th>\n",
+       "      <th>stime</th>\n",
+       "      <th>etime</th>\n",
+       "      <th>packageName</th>\n",
+       "      <th>total</th>\n",
+       "      <th>isInUsable</th>\n",
+       "      <th>packageFullName</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>20</th>\n",
+       "      <td>21</td>\n",
+       "      <td>1DeL2E3y2JaTB5PqHHlZXdcNSfF3</td>\n",
+       "      <td>2018-12-02</td>\n",
+       "      <td>2018-12-02 00:36:37</td>\n",
+       "      <td>2018-12-02 00:36:41</td>\n",
+       "      <td>에브리타임</td>\n",
+       "      <td>4</td>\n",
+       "      <td>False</td>\n",
+       "      <td>com.everytime.v2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>21</th>\n",
+       "      <td>22</td>\n",
+       "      <td>1DeL2E3y2JaTB5PqHHlZXdcNSfF3</td>\n",
+       "      <td>2018-12-02</td>\n",
+       "      <td>2018-12-02 00:36:43</td>\n",
+       "      <td>2018-12-02 00:43:21</td>\n",
+       "      <td>YouTube</td>\n",
+       "      <td>398</td>\n",
+       "      <td>False</td>\n",
+       "      <td>com.google.android.youtube</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>22</th>\n",
+       "      <td>23</td>\n",
+       "      <td>1DeL2E3y2JaTB5PqHHlZXdcNSfF3</td>\n",
+       "      <td>2018-12-02</td>\n",
+       "      <td>2018-12-02 00:43:24</td>\n",
+       "      <td>2018-12-02 00:43:34</td>\n",
+       "      <td>퓨처파이트</td>\n",
+       "      <td>10</td>\n",
+       "      <td>False</td>\n",
+       "      <td>com.netmarble.mherosgb</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>26</th>\n",
+       "      <td>31</td>\n",
+       "      <td>1DeL2E3y2JaTB5PqHHlZXdcNSfF3</td>\n",
+       "      <td>2018-12-02</td>\n",
+       "      <td>2018-12-02 02:31:01</td>\n",
+       "      <td>2018-12-02 02:31:12</td>\n",
+       "      <td>Play 스토어</td>\n",
+       "      <td>11</td>\n",
+       "      <td>False</td>\n",
+       "      <td>com.android.vending</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>144</th>\n",
+       "      <td>155</td>\n",
+       "      <td>1DeL2E3y2JaTB5PqHHlZXdcNSfF3</td>\n",
+       "      <td>2018-12-02</td>\n",
+       "      <td>2018-12-02 04:22:17</td>\n",
+       "      <td>2018-12-02 04:22:21</td>\n",
+       "      <td>캠퍼스픽</td>\n",
+       "      <td>4</td>\n",
+       "      <td>False</td>\n",
+       "      <td>com.vinulabs.campuspick</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "     _id                           uid        date                stime  \\\n",
+       "20    21  1DeL2E3y2JaTB5PqHHlZXdcNSfF3  2018-12-02  2018-12-02 00:36:37   \n",
+       "21    22  1DeL2E3y2JaTB5PqHHlZXdcNSfF3  2018-12-02  2018-12-02 00:36:43   \n",
+       "22    23  1DeL2E3y2JaTB5PqHHlZXdcNSfF3  2018-12-02  2018-12-02 00:43:24   \n",
+       "26    31  1DeL2E3y2JaTB5PqHHlZXdcNSfF3  2018-12-02  2018-12-02 02:31:01   \n",
+       "144  155  1DeL2E3y2JaTB5PqHHlZXdcNSfF3  2018-12-02  2018-12-02 04:22:17   \n",
+       "\n",
+       "                   etime packageName  total  isInUsable  \\\n",
+       "20   2018-12-02 00:36:41       에브리타임      4       False   \n",
+       "21   2018-12-02 00:43:21     YouTube    398       False   \n",
+       "22   2018-12-02 00:43:34       퓨처파이트     10       False   \n",
+       "26   2018-12-02 02:31:12    Play 스토어     11       False   \n",
+       "144  2018-12-02 04:22:21        캠퍼스픽      4       False   \n",
+       "\n",
+       "                packageFullName  \n",
+       "20             com.everytime.v2  \n",
+       "21   com.google.android.youtube  \n",
+       "22       com.netmarble.mherosgb  \n",
+       "26          com.android.vending  \n",
+       "144     com.vinulabs.campuspick  "
+      ]
+     },
+     "execution_count": 389,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "app_df_delete_nan.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 390,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "43"
+      ]
+     },
+     "execution_count": 390,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(set(app_df_delete_nan[\"uid\"]))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 391,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "class PREPROCESSING:\n",
+    "    \n",
+    "    def __init__(self):\n",
+    "        index_list = []\n",
+    "        \n",
+    "    def pase_to_date_with_stime(self,df):\n",
+    "        \n",
+    "        df['stime'] = df['stime'].apply(dateutil.parser.parse, dayfirst=False)\n",
+    "        df['etime'] = df['etime'].apply(dateutil.parser.parse, dayfirst=False)\n",
+    "        return df\n",
+    "    def pase_to_date_with_time(self,df):\n",
+    "        \n",
+    "        df['time'] = df['time'].apply(dateutil.parser.parse, dayfirst=False)\n",
+    "        return df\n",
+    "        \n",
+    "    #EMA 시작 시간 기준 전/후 30분 간격으로 Index 생성\n",
+    "    def make_index_list(self,stime, etime, ema_time_year, ema_time_month, ema_time_day, ema_p):\n",
+    "        default_stime = datetime(ema_time_year, ema_time_month, ema_time_day,0, 0, 0)\n",
+    "        time_var = stime\n",
+    "        ema_params = []\n",
+    "        #make index list\n",
+    "        #ema 시간 기준 전 30분\n",
+    "        while time_var >= default_stime:\n",
+    "            #print(\"time_var\",time_var)\n",
+    "            index_list.append(time_var)\n",
+    "            time_var = time_var - timedelta(minutes=30)\n",
+    "            ema_params.append(ema_p)\n",
+    "        default_etime = datetime(stime_year, stime_month, stime_day,23, 59, 59)\n",
+    "        time_var = stime\n",
+    "        \n",
+    "        #ema 시작시간 ~ 끝시간\n",
+    "        while time_var <= etime:\n",
+    "            index_list.append(time_var)\n",
+    "            time_var = time_var + timedelta(minutes=30)\n",
+    "            ema_params.append(ema_p)\n",
+    "\n",
+    "#         후 30분\n",
+    "#         while time_var < default_etime:\n",
+    "#             index_list.append(time_var)\n",
+    "#             time_var = time_var + timedelta(minutes=30)\n",
+    "        index_ema_dict = {'time':index_list, 'ema':ema_params}\n",
+    "#         index_ema_dict = dict(zip(sorted(set(index_list)),ema_params))\n",
+    "            \n",
+    "        return index_ema_dict\n",
+    "    \n",
+    "    def make_index_list_after(self,stime, etime, ema_time_year, ema_time_month, ema_time_day, ema_p):\n",
+    "        default_stime = datetime(ema_time_year, ema_time_month, ema_time_day,0, 0, 0)\n",
+    "        time_var = stime\n",
+    "        ema_params = []\n",
+    "        #make index list\n",
+    "       \n",
+    "        \n",
+    "        #ema 시작시간 ~ 끝시간\n",
+    "        while time_var <= etime:\n",
+    "            index_list.append(time_var)\n",
+    "            time_var = time_var + timedelta(minutes=30)\n",
+    "            ema_params.append(ema_p)\n",
+    "            \n",
+    "        default_etime = datetime(stime_year, stime_month, stime_day,23, 59, 59)\n",
+    "        time_var = stime\n",
+    "        #후 30분\n",
+    "        while time_var < default_etime:\n",
+    "            index_list.append(time_var)\n",
+    "            time_var = time_var + timedelta(minutes=30)\n",
+    "            ema_params.append(ema_p)\n",
+    "            \n",
+    "        index_ema_dict2 = dict(sorted(index_list),ema_params)\n",
+    "            \n",
+    "        return index_ema_dict2\n",
+    "    \n",
+    "    def make_col_list(self,ema_col_list, activities, locs, apps):\n",
+    "        column_list = []\n",
+    "        act_col = []\n",
+    "        for i in activities:\n",
+    "            \n",
+    "            act_col.append(\"act\"+str(i))\n",
+    "        column_list.extend(ema_col_list)\n",
+    "        column_list.extend(act_col)\n",
+    "        column_list.extend(locs)\n",
+    "        column_list.extend(apps)\n",
+    "        #activity unique data type\n",
+    "\n",
+    "        return column_list\n",
+    "    \n",
+    "    def mapping_time_activity(self, df):\n",
+    "        activity_parse = pd.DataFrame(columns = [\"uid\", \"activity_type\"])\n",
+    "        \n",
+    "        for index,row in df.iterrows():\n",
+    "            df_stime = row['stime']\n",
+    "            df_etime = row['etime']\n",
+    "            df_uid = row['uid']\n",
+    "            ac_type = row['value']\n",
+    "            \n",
+    "            while df_stime <= df_etime:\n",
+    "                df_stime = df_stime + timedelta(minutes=1)\n",
+    "                activity_parse.loc[(df_stime), (\"uid\")] =  df_uid\n",
+    "                activity_parse.loc[(df_stime), (\"activity_type\")] =  ac_type\n",
+    "\n",
+    "        return activity_parse\n",
+    "    \n",
+    "    def mapping_time_location(self, df):\n",
+    "        location_parse = pd.DataFrame(columns = [\"uid\",\"loc_type\"])\n",
+    "        df[\"pre\"] = df['time'].shift(-1)\n",
+    "        \n",
+    "        for index,row in df.iterrows():\n",
+    "            timestamp = row['time']\n",
+    "            nextstamp = row['pre']\n",
+    "            loc_type = row['poiName']\n",
+    "\n",
+    "            while timestamp < nextstamp:\n",
+    "                location_parse.loc[(timestamp), (\"uid\")] =  row['uid']\n",
+    "                location_parse.loc[(timestamp), (\"loc_type\")] =  loc_type\n",
+    "                timestamp = timestamp + timedelta(minutes=1)\n",
+    "\n",
+    "        return location_parse\n",
+    "    \n",
+    "    def mapping_time_app(self, df):\n",
+    "        app_parse = pd.DataFrame(columns = [\"uid\",\"app_type\"])\n",
+    "        \n",
+    "        for index,row in df.iterrows():\n",
+    "            df_stime = row['stime']\n",
+    "            df_etime = row['etime']\n",
+    "\n",
+    "            app_type = row['packageName']\n",
+    "            \n",
+    "            while df_stime <= df_etime:\n",
+    "                df_stime = df_stime + timedelta(minutes=1)\n",
+    "                app_parse.loc[(df_stime), (\"uid\")] =  row['uid']\n",
+    "                app_parse.loc[(df_stime), (\"app_type\")] =  app_type\n",
+    "                \n",
+    "        return app_parse\n",
+    "    \n",
+    "                \n",
+    "            "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Parsing to Datetime"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Parsing string to date type"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 392,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "preprocessing = PREPROCESSING()\n",
+    "\n",
+    "ema_date = pd.DataFrame()\n",
+    "ema_date = preprocessing.pase_to_date_with_stime(ema_count_df)\n",
+    "ema_date = ema_count_df[ema_count_df['stime'] > datetime(2018, 12, 2,23, 59, 0)]\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 393,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\Anaconda3\\lib\\site-packages\\ipykernel_launcher.py:8: SettingWithCopyWarning: \n",
+      "A value is trying to be set on a copy of a slice from a DataFrame.\n",
+      "Try using .loc[row_indexer,col_indexer] = value instead\n",
+      "\n",
+      "See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy\n",
+      "  \n",
+      "C:\\Anaconda3\\lib\\site-packages\\ipykernel_launcher.py:9: SettingWithCopyWarning: \n",
+      "A value is trying to be set on a copy of a slice from a DataFrame.\n",
+      "Try using .loc[row_indexer,col_indexer] = value instead\n",
+      "\n",
+      "See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy\n",
+      "  if __name__ == '__main__':\n"
+     ]
+    }
+   ],
+   "source": [
+    "preprocessing = PREPROCESSING()\n",
+    "\n",
+    "activity_date = pd.DataFrame()\n",
+    "location_date = pd.DataFrame()\n",
+    "app_date = pd.DataFrame()\n",
+    "\n",
+    "activity_date = preprocessing.pase_to_date_with_stime(activity_df)\n",
+    "location_date = preprocessing.pase_to_date_with_time(location_df)\n",
+    "app_date = preprocessing.pase_to_date_with_stime(app_df_delete_nan)\n",
+    "\n",
+    "#12/3 일 이후 데이터만 사용\n",
+    "activity_date = activity_date[activity_date['stime'] > datetime(2018, 12, 2,23, 59, 0)]\n",
+    "location_date = location_date[location_date['time'] > datetime(2018, 12, 2,23, 59, 0)]\n",
+    "app_date = app_date[app_date['stime'] > datetime(2018, 12, 2,23, 59, 0)]\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 394,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(1570, 4)"
+      ]
+     },
+     "execution_count": 394,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "ema_date.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 395,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(5801, 9)"
+      ]
+     },
+     "execution_count": 395,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "activity_date.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 396,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(1600, 9)"
+      ]
+     },
+     "execution_count": 396,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "location_date.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 397,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(84642, 9)"
+      ]
+     },
+     "execution_count": 397,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "app_date.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 398,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'1DeL2E3y2JaTB5PqHHlZXdcNSfF3',\n",
+       " '2zXMPviuTnUjrpdK0ZBPISBeJ972',\n",
+       " '6wbsB6W1sCYknA96sJdHPbDcFEp1',\n",
+       " '7ofS29aGCeS26xm3T3tb3fQ86Br1',\n",
+       " '8WS9np2uofgyRpWyXRCpEuIsWBg2',\n",
+       " '94gz8LxGokeWdyCBo3huROqqV3U2',\n",
+       " '9XG2VHbktHN1umTW5MMUQWyLpwy1',\n",
+       " 'AGXp0ud1nla8B81fUoXJp7nvfSN2',\n",
+       " 'CwveK4fKgHXbBgGZm4sUrnZSaZZ2',\n",
+       " 'FGmDz1CAMCZ0w2dhujpXyBBm1LZ2',\n",
+       " 'GHzmwZVpU5O5K0ixTzRj0YoBjy13',\n",
+       " 'GZJyA3ruN4gd2UuXTr8mhPoYVQh1',\n",
+       " 'GakIjZXtxUXHjoL0mvqZGGE4wp23',\n",
+       " 'IEjZ6G7Y9ybiIA6T0VjzWluowDA3',\n",
+       " 'JSaVEf4icUbMgOCBUbhSP18Xt0w1',\n",
+       " 'KSj3d18SnKerriHxUbpHbRi9kBK2',\n",
+       " 'LkdtwWELlgbrOMDMSjgxfyYQwo62',\n",
+       " 'Qra9u7rQNHV1AZTZXhHcMJ8wIAs2',\n",
+       " 'QuYczEWOwgYggjK3Kmjinl6K0vz1',\n",
+       " 'S45xvu9zcvYZeidGjGOBgXw3g6r1',\n",
+       " 'TbkrARDiqAcChrxa0EuFFNx2WBq1',\n",
+       " 'V3ZVgylQBtQtDRbRbVEZPyFKK6X2',\n",
+       " 'VJfnskwl9CUe4Ckut2ZyIXhO9fm1',\n",
+       " 'WlURqByaPyb77dmMSbCIqVtnlvw1',\n",
+       " 'YKyiwuxE6fe77RWBQnz30ZOxEz62',\n",
+       " 'Yoo8ZEnIVkdk7CaHVdfRZ9YnKz72',\n",
+       " 'Zmx61D74q3dvRp9qilfKWIhWlAk1',\n",
+       " 'bsy5KxBCW4hyIPeppvKpu82OOSY2',\n",
+       " 'cDKzPAjcxOPWwwgl5pqPVxF4TIo2',\n",
+       " 'dxBc3vgsAme5D8mLNBStDCUFXYA2',\n",
+       " 'el9g7kFJKgMpCKQX4t60N2UdsGF2',\n",
+       " 'fW8hnVG3WZVuTNYizgf2jBEWWhl2',\n",
+       " 'gkefpZWP1oSsU0w22uHhRdQ0GiV2',\n",
+       " 'hXPOb4kYLUScXfqCvLidmSjcHYb2',\n",
+       " 'hhLmJ2PZ3KMMgd9044eUHQPGfU43',\n",
+       " 'm8ntso7GgcdUpzWV2mGW9AuoSE32',\n",
+       " 'nzJaQkcpcAPvzTYm1QumZ9A7zyr1',\n",
+       " 'otfKOMf7VUaB5lxUARO0HNusxPB2',\n",
+       " 'rHJfo8b3MkhXYse4uBiWAr3n7IV2',\n",
+       " 'tm0bz2NkYnMPEbmLcUs3O5BFAc63',\n",
+       " 'vrDemSg0kdMNnZgsXMLAFmQvTG93',\n",
+       " 'wizLEwlbSKUAiaJ8dEW3pHP6FoU2',\n",
+       " 'xEFm5EFLrbcBCjhPitiO6uGQTjy1'}"
+      ]
+     },
+     "execution_count": 398,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "set(ema_date['uid'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Preprocessing"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Mapping Activity Data With Time"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 400,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "preprocessing = PREPROCESSING()\n",
+    "activity_pre = preprocessing.mapping_time_activity(activity_date)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 401,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{0, 1, 3, 7, 8}"
+      ]
+     },
+     "execution_count": 401,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "set(activity_pre[\"activity_type\"])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 402,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'1DeL2E3y2JaTB5PqHHlZXdcNSfF3',\n",
+       " '2zXMPviuTnUjrpdK0ZBPISBeJ972',\n",
+       " '6wbsB6W1sCYknA96sJdHPbDcFEp1',\n",
+       " '7ofS29aGCeS26xm3T3tb3fQ86Br1',\n",
+       " '8WS9np2uofgyRpWyXRCpEuIsWBg2',\n",
+       " '94gz8LxGokeWdyCBo3huROqqV3U2',\n",
+       " '9XG2VHbktHN1umTW5MMUQWyLpwy1',\n",
+       " 'AGXp0ud1nla8B81fUoXJp7nvfSN2',\n",
+       " 'CwveK4fKgHXbBgGZm4sUrnZSaZZ2',\n",
+       " 'FGmDz1CAMCZ0w2dhujpXyBBm1LZ2',\n",
+       " 'GHzmwZVpU5O5K0ixTzRj0YoBjy13',\n",
+       " 'GZJyA3ruN4gd2UuXTr8mhPoYVQh1',\n",
+       " 'GakIjZXtxUXHjoL0mvqZGGE4wp23',\n",
+       " 'IEjZ6G7Y9ybiIA6T0VjzWluowDA3',\n",
+       " 'JSaVEf4icUbMgOCBUbhSP18Xt0w1',\n",
+       " 'KSj3d18SnKerriHxUbpHbRi9kBK2',\n",
+       " 'LkdtwWELlgbrOMDMSjgxfyYQwo62',\n",
+       " 'Qra9u7rQNHV1AZTZXhHcMJ8wIAs2',\n",
+       " 'QuYczEWOwgYggjK3Kmjinl6K0vz1',\n",
+       " 'S45xvu9zcvYZeidGjGOBgXw3g6r1',\n",
+       " 'TbkrARDiqAcChrxa0EuFFNx2WBq1',\n",
+       " 'V3ZVgylQBtQtDRbRbVEZPyFKK6X2',\n",
+       " 'VJfnskwl9CUe4Ckut2ZyIXhO9fm1',\n",
+       " 'WlURqByaPyb77dmMSbCIqVtnlvw1',\n",
+       " 'YKyiwuxE6fe77RWBQnz30ZOxEz62',\n",
+       " 'Yoo8ZEnIVkdk7CaHVdfRZ9YnKz72',\n",
+       " 'Zmx61D74q3dvRp9qilfKWIhWlAk1',\n",
+       " 'bsy5KxBCW4hyIPeppvKpu82OOSY2',\n",
+       " 'cDKzPAjcxOPWwwgl5pqPVxF4TIo2',\n",
+       " 'dxBc3vgsAme5D8mLNBStDCUFXYA2',\n",
+       " 'el9g7kFJKgMpCKQX4t60N2UdsGF2',\n",
+       " 'fW8hnVG3WZVuTNYizgf2jBEWWhl2',\n",
+       " 'gkefpZWP1oSsU0w22uHhRdQ0GiV2',\n",
+       " 'hXPOb4kYLUScXfqCvLidmSjcHYb2',\n",
+       " 'hhLmJ2PZ3KMMgd9044eUHQPGfU43',\n",
+       " 'm8ntso7GgcdUpzWV2mGW9AuoSE32',\n",
+       " 'nzJaQkcpcAPvzTYm1QumZ9A7zyr1',\n",
+       " 'otfKOMf7VUaB5lxUARO0HNusxPB2',\n",
+       " 'rHJfo8b3MkhXYse4uBiWAr3n7IV2',\n",
+       " 'tm0bz2NkYnMPEbmLcUs3O5BFAc63',\n",
+       " 'vrDemSg0kdMNnZgsXMLAFmQvTG93',\n",
+       " 'wizLEwlbSKUAiaJ8dEW3pHP6FoU2',\n",
+       " 'xEFm5EFLrbcBCjhPitiO6uGQTjy1'}"
+      ]
+     },
+     "execution_count": 402,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "set(activity_pre[\"uid\"])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 403,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>uid</th>\n",
+       "      <th>activity_type</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2018-12-03 00:01:00</th>\n",
+       "      <td>YKyiwuxE6fe77RWBQnz30ZOxEz62</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2018-12-03 00:02:00</th>\n",
+       "      <td>YKyiwuxE6fe77RWBQnz30ZOxEz62</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2018-12-03 00:03:00</th>\n",
+       "      <td>YKyiwuxE6fe77RWBQnz30ZOxEz62</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2018-12-03 00:04:00</th>\n",
+       "      <td>YKyiwuxE6fe77RWBQnz30ZOxEz62</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2018-12-03 00:05:00</th>\n",
+       "      <td>YKyiwuxE6fe77RWBQnz30ZOxEz62</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                              uid activity_type\n",
+       "2018-12-03 00:01:00  YKyiwuxE6fe77RWBQnz30ZOxEz62             3\n",
+       "2018-12-03 00:02:00  YKyiwuxE6fe77RWBQnz30ZOxEz62             3\n",
+       "2018-12-03 00:03:00  YKyiwuxE6fe77RWBQnz30ZOxEz62             3\n",
+       "2018-12-03 00:04:00  YKyiwuxE6fe77RWBQnz30ZOxEz62             3\n",
+       "2018-12-03 00:05:00  YKyiwuxE6fe77RWBQnz30ZOxEz62             3"
+      ]
+     },
+     "execution_count": 403,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "activity_pre.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Mapping Location Data With Time"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 404,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\Anaconda3\\lib\\site-packages\\ipykernel_launcher.py:103: SettingWithCopyWarning: \n",
+      "A value is trying to be set on a copy of a slice from a DataFrame.\n",
+      "Try using .loc[row_indexer,col_indexer] = value instead\n",
+      "\n",
+      "See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy\n"
+     ]
+    }
+   ],
+   "source": [
+    "preprocessing = PREPROCESSING()\n",
+    "location_pre = preprocessing.mapping_time_location(location_date)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 405,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "357"
+      ]
+     },
+     "execution_count": 405,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(set(location_pre[\"loc_type\"]))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 406,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>uid</th>\n",
+       "      <th>loc_type</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2018-12-03 10:19:23</th>\n",
+       "      <td>2zXMPviuTnUjrpdK0ZBPISBeJ972</td>\n",
+       "      <td>서울 동대문구 회기로23다길</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2018-12-03 10:20:23</th>\n",
+       "      <td>2zXMPviuTnUjrpdK0ZBPISBeJ972</td>\n",
+       "      <td>서울 동대문구 회기로23다길</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2018-12-03 10:21:23</th>\n",
+       "      <td>2zXMPviuTnUjrpdK0ZBPISBeJ972</td>\n",
+       "      <td>서울 동대문구 회기로23다길</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2018-12-03 10:22:23</th>\n",
+       "      <td>2zXMPviuTnUjrpdK0ZBPISBeJ972</td>\n",
+       "      <td>서울 동대문구 회기로23다길</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2018-12-03 10:23:23</th>\n",
+       "      <td>2zXMPviuTnUjrpdK0ZBPISBeJ972</td>\n",
+       "      <td>서울 동대문구 회기로23다길</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                              uid         loc_type\n",
+       "2018-12-03 10:19:23  2zXMPviuTnUjrpdK0ZBPISBeJ972  서울 동대문구 회기로23다길\n",
+       "2018-12-03 10:20:23  2zXMPviuTnUjrpdK0ZBPISBeJ972  서울 동대문구 회기로23다길\n",
+       "2018-12-03 10:21:23  2zXMPviuTnUjrpdK0ZBPISBeJ972  서울 동대문구 회기로23다길\n",
+       "2018-12-03 10:22:23  2zXMPviuTnUjrpdK0ZBPISBeJ972  서울 동대문구 회기로23다길\n",
+       "2018-12-03 10:23:23  2zXMPviuTnUjrpdK0ZBPISBeJ972  서울 동대문구 회기로23다길"
+      ]
+     },
+     "execution_count": 406,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "location_pre.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Mapping AppLog Data With Time"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 407,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "preprocessing = PREPROCESSING()\n",
+    "app_pre = preprocessing.mapping_time_app(app_date)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 408,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "608"
+      ]
+     },
+     "execution_count": 408,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(set(app_pre[\"app_type\"]))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 409,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>uid</th>\n",
+       "      <th>app_type</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2018-12-03 07:53:42</th>\n",
+       "      <td>1DeL2E3y2JaTB5PqHHlZXdcNSfF3</td>\n",
+       "      <td>카카오톡</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2018-12-03 09:17:10</th>\n",
+       "      <td>1DeL2E3y2JaTB5PqHHlZXdcNSfF3</td>\n",
+       "      <td>카카오톡</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2018-12-03 09:18:20</th>\n",
+       "      <td>1DeL2E3y2JaTB5PqHHlZXdcNSfF3</td>\n",
+       "      <td>카카오톡</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2018-12-03 09:19:30</th>\n",
+       "      <td>1DeL2E3y2JaTB5PqHHlZXdcNSfF3</td>\n",
+       "      <td>에브리타임</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2018-12-03 09:20:51</th>\n",
+       "      <td>1DeL2E3y2JaTB5PqHHlZXdcNSfF3</td>\n",
+       "      <td>에브리타임</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                              uid app_type\n",
+       "2018-12-03 07:53:42  1DeL2E3y2JaTB5PqHHlZXdcNSfF3     카카오톡\n",
+       "2018-12-03 09:17:10  1DeL2E3y2JaTB5PqHHlZXdcNSfF3     카카오톡\n",
+       "2018-12-03 09:18:20  1DeL2E3y2JaTB5PqHHlZXdcNSfF3     카카오톡\n",
+       "2018-12-03 09:19:30  1DeL2E3y2JaTB5PqHHlZXdcNSfF3    에브리타임\n",
+       "2018-12-03 09:20:51  1DeL2E3y2JaTB5PqHHlZXdcNSfF3    에브리타임"
+      ]
+     },
+     "execution_count": 409,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "app_pre.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 410,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "activity_result = activity_pre\n",
+    "location_result = location_pre\n",
+    "app_result = app_pre"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 411,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Index(['uid', 'stime', 'etime', 'EMA'], dtype='object')"
+      ]
+     },
+     "execution_count": 411,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "ema_date.columns"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 412,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(1570, 4)"
+      ]
+     },
+     "execution_count": 412,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "ema_date.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## EMA_WITH_ACTIVITY_LOCATION"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Make data with pre_data of EMA"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Time Data Mapping "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "def parse_to_absolute_time(x):\n",
+    "    #seconds = (x.hour * 60 + x.minute) * 60 + x.second\n",
+    "    return x.timestamp()\n",
+    "def parse_to_day_of_year(x):\n",
+    "    return x.timetuple().tm_yday\n",
+    "def parse_to_day_of_week(x):\n",
+    "    return x.weekday()\n",
+    "def parse_to_month_of_year(x):\n",
+    "    return x.month\n",
+    "def parse_to_hour_of_day(x):\n",
+    "    return x.hour\n",
+    "def parse_to_minute_of_hour(x):\n",
+    "    return x.minute\n",
+    "def add30(x):\n",
+    "    return x+timedelta(minutes=30)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true,
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "ema_date['ema_id'] = ema_date.index"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Make Time List"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 317,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2018-12-03 00:00:00 2018-12-03 00:00:00\n",
+      "2018-12-03 08:59:36 2018-12-03 00:00:00\n",
+      "2018-12-03 10:52:10 2018-12-03 00:00:00\n",
+      "2018-12-03 12:13:50 2018-12-03 00:00:00\n",
+      "2018-12-03 13:34:55 2018-12-03 00:00:00\n",
+      "2018-12-03 15:39:39 2018-12-03 00:00:00\n",
+      "2018-12-03 15:39:39 2018-12-03 00:00:00\n",
+      "2018-12-03 18:15:34 2018-12-03 00:00:00\n",
+      "2018-12-03 19:43:30 2018-12-03 00:00:00\n",
+      "2018-12-04 00:00:00 2018-12-04 00:00:00\n",
+      "2018-12-04 09:01:10 2018-12-04 00:00:00\n",
+      "2018-12-04 09:01:10 2018-12-04 00:00:00\n",
+      "2018-12-04 13:22:09 2018-12-04 00:00:00\n",
+      "2018-12-04 19:08:46 2018-12-04 00:00:00\n",
+      "2018-12-05 00:22:17 2018-12-05 00:00:00\n",
+      "2018-12-05 11:51:22 2018-12-05 00:00:00\n",
+      "2018-12-05 16:52:44 2018-12-05 00:00:00\n",
+      "2018-12-05 18:14:13 2018-12-05 00:00:00\n",
+      "2018-12-06 00:00:00 2018-12-06 00:00:00\n",
+      "2018-12-06 09:31:09 2018-12-06 00:00:00\n",
+      "2018-12-06 16:31:46 2018-12-06 00:00:00\n",
+      "2018-12-06 16:31:46 2018-12-06 00:00:00\n",
+      "2018-12-06 18:18:59 2018-12-06 00:00:00\n",
+      "2018-12-07 00:00:00 2018-12-07 00:00:00\n",
+      "2018-12-07 09:00:24 2018-12-07 00:00:00\n",
+      "2018-12-07 11:01:24 2018-12-07 00:00:00\n",
+      "2018-12-07 12:53:29 2018-12-07 00:00:00\n",
+      "2018-12-07 16:20:24 2018-12-07 00:00:00\n",
+      "2018-12-08 00:00:00 2018-12-08 00:00:00\n",
+      "2018-12-08 09:53:30 2018-12-08 00:00:00\n",
+      "2018-12-08 13:40:46 2018-12-08 00:00:00\n",
+      "2018-12-09 00:00:00 2018-12-09 00:00:00\n"
+     ]
+    }
+   ],
+   "source": [
+    "#stime, etime 을 date 형식으로 변경\n",
+    "\n",
+    "\n",
+    "#make column list\n",
+    "ema_cols = ema_date.columns\n",
+    "activity_cols = set(activity_pre['activity_type'])\n",
+    "loc_list = set(location_pre['loc_type'])\n",
+    "app_list = set(app_pre['app_type'])\n",
+    "\n",
+    "index_list = [] \n",
+    "column_list=[]\n",
+    "\n",
+    "preprocessing = PREPROCESSING()\n",
+    "\n",
+    "count = 0\n",
+    "\n",
+    "#    if 'CwveK4fKgHXbBgGZm4sUrnZSaZZ2' in file or '2zXMPviuTnUjrpdK0ZBPISBeJ972' in file:\n",
+    "\n",
+    "result = pd.DataFrame()\n",
+    "uids = []\n",
+    "emas = []\n",
+    "etime_list = []\n",
+    "tmp = 0\n",
+    "\n",
+    "index_list = []\n",
+    "ema_list = []\n",
+    "count = 0\n",
+    "index_dict = {}\n",
+    "for index in ema_date[ema_date['uid']=='CwveK4fKgHXbBgGZm4sUrnZSaZZ2'].iterrows():\n",
+    "    stime = index[1]['stime']\n",
+    "    etime = index[1]['etime']\n",
+    "    uid = index[1]['uid']\n",
+    "    ema = index[1]['EMA']\n",
+    "    #print(\"***\", stime, etime)\n",
+    "\n",
+    "    stime_year = stime.year\n",
+    "    stime_month = stime.month\n",
+    "    stime_day = stime.day\n",
+    "    stime_hour = stime.hour\n",
+    "    stime_minute = stime.minute\n",
+    "    stime_second = stime.second\n",
+    "    \n",
+    "\n",
+    "    default_stime = datetime(stime_year, stime_month, stime_day,0, 0, 0)\n",
+    "    time_var = stime\n",
+    "    \n",
+    "    print(time_var, default_stime)\n",
+    "    while time_var >= default_stime:\n",
+    "        #print(\"time_var 1\",time_var)\n",
+    "        #index_list.append(time_var)\n",
+    "        index_dict.update( {count : (time_var, ema)} )        \n",
+    "        time_var = time_var - timedelta(minutes=30)\n",
+    "        #ema_list.append(ema)\n",
+    "        count +=1\n",
+    "        \n",
+    "    default_etime = datetime(stime_year, stime_month, stime_day,23, 59, 59)\n",
+    "    time_var = stime\n",
+    "\n",
+    "    #ema 시작시간 ~ 끝시간\n",
+    "    while time_var <= etime:\n",
+    "        #print(\"time_var 2\",time_var)\n",
+    "\n",
+    "        #index_list.append(time_var)\n",
+    "        time_var = time_var + timedelta(minutes=30)\n",
+    "        index_dict.update( {count : (time_var, ema)} )\n",
+    "\n",
+    "        #ema_list.append(ema)\n",
+    "        count +=1\n",
+    "\n",
+    "            \n",
+    "    \n",
+    "    #print(index[0], index_dict)\n",
+    "        \n",
+    "\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Fill Time Value"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 331,
+   "metadata": {
+    "collapsed": true,
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "result = pd.DataFrame()\n",
+    "\n",
+    "for key in index_dict:\n",
+    "    \n",
+    "    result.loc[key,'stime'] = index_dict[key][0]\n",
+    "    result.loc[key,'etime'] = result.loc[key,'stime']+timedelta(minutes=30)\n",
+    "\n",
+    "    result.loc[key,'EMA'] =index_dict[key][1]\n",
+    "\n",
+    "    result.loc[key,\"Absolute_time\"] = result.loc[key,'stime'].timestamp()\n",
+    "    result.loc[key,\"day_of_year\"] = result.loc[key,'stime'].timetuple().tm_yday\n",
+    "    result.loc[key,\"day_of_week\"] = result.loc[key,'stime'].weekday()\n",
+    "    result.loc[key,\"month_of_year\"] = result.loc[key,'stime'].month\n",
+    "    result.loc[key,\"hour_of_day\"] = result.loc[key,'stime'].hour\n",
+    "    result.loc[key,\"minute_of_hour\"] = result.loc[key,'stime'].minute\n",
+    "    result.loc[key,'act1'] = 0\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 332,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(995, 10)"
+      ]
+     },
+     "execution_count": 332,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "result.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 333,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>stime</th>\n",
+       "      <th>etime</th>\n",
+       "      <th>EMA</th>\n",
+       "      <th>Absolute_time</th>\n",
+       "      <th>day_of_year</th>\n",
+       "      <th>day_of_week</th>\n",
+       "      <th>month_of_year</th>\n",
+       "      <th>hour_of_day</th>\n",
+       "      <th>minute_of_hour</th>\n",
+       "      <th>act1</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>2018-12-03 00:00:00</td>\n",
+       "      <td>2018-12-03 00:30:00</td>\n",
+       "      <td>수면</td>\n",
+       "      <td>1.543795e+09</td>\n",
+       "      <td>337.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>12.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>2018-12-03 00:30:00</td>\n",
+       "      <td>2018-12-03 01:00:00</td>\n",
+       "      <td>수면</td>\n",
+       "      <td>1.543797e+09</td>\n",
+       "      <td>337.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>12.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>30.0</td>\n",
+       "      <td>0.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>2018-12-03 01:00:00</td>\n",
+       "      <td>2018-12-03 01:30:00</td>\n",
+       "      <td>수면</td>\n",
+       "      <td>1.543799e+09</td>\n",
+       "      <td>337.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>12.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>2018-12-03 01:30:00</td>\n",
+       "      <td>2018-12-03 02:00:00</td>\n",
+       "      <td>수면</td>\n",
+       "      <td>1.543801e+09</td>\n",
+       "      <td>337.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>12.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>30.0</td>\n",
+       "      <td>0.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>2018-12-03 02:00:00</td>\n",
+       "      <td>2018-12-03 02:30:00</td>\n",
+       "      <td>수면</td>\n",
+       "      <td>1.543802e+09</td>\n",
+       "      <td>337.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>12.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                stime               etime EMA  Absolute_time  day_of_year  \\\n",
+       "0 2018-12-03 00:00:00 2018-12-03 00:30:00  수면   1.543795e+09        337.0   \n",
+       "1 2018-12-03 00:30:00 2018-12-03 01:00:00  수면   1.543797e+09        337.0   \n",
+       "2 2018-12-03 01:00:00 2018-12-03 01:30:00  수면   1.543799e+09        337.0   \n",
+       "3 2018-12-03 01:30:00 2018-12-03 02:00:00  수면   1.543801e+09        337.0   \n",
+       "4 2018-12-03 02:00:00 2018-12-03 02:30:00  수면   1.543802e+09        337.0   \n",
+       "\n",
+       "   day_of_week  month_of_year  hour_of_day  minute_of_hour  act1  \n",
+       "0          0.0           12.0          0.0             0.0   0.0  \n",
+       "1          0.0           12.0          0.0            30.0   0.0  \n",
+       "2          0.0           12.0          1.0             0.0   0.0  \n",
+       "3          0.0           12.0          1.0            30.0   0.0  \n",
+       "4          0.0           12.0          2.0             0.0   0.0  "
+      ]
+     },
+     "execution_count": 333,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "result.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 334,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'공부/과제', '동아리활동', '문화생활', '수면', '수업', '식사/음주', '알바', '운동/산책'}"
+      ]
+     },
+     "execution_count": 334,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "set(result['EMA'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Activity Data Mapping"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 335,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "c0 = 0\n",
+    "c1= 0\n",
+    "c3 = 0\n",
+    "c7 = 0\n",
+    "c8 = 0\n",
+    "def count_0(x):\n",
+    "    if x == 0:\n",
+    "        c0+=1\n",
+    "    return c0\n",
+    "def count_1(x):\n",
+    "    if x == 1:\n",
+    "        c1+=1\n",
+    "    return c0\n",
+    "def count_3(x):\n",
+    "    if x == 3:\n",
+    "        c3+=1\n",
+    "    return c0\n",
+    "def count_7(x):\n",
+    "    if x == 7:\n",
+    "        c7+=1\n",
+    "    return c0\n",
+    "def count_8(x):\n",
+    "    if x == 8:\n",
+    "        c8+=1\n",
+    "    return c8"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 336,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "result['act0'] = 0\n",
+    "result['act1'] = 0\n",
+    "result['act3'] = 0\n",
+    "result['act7'] = 0\n",
+    "result['act8'] = 0\n",
+    "for ema_index, ema_row in result.iterrows():\n",
+    "    \n",
+    "    c0 = 0\n",
+    "    c1= 0\n",
+    "    c3 = 0\n",
+    "    c7 = 0\n",
+    "    c8 = 0\n",
+    "    stime = ema_row['stime']\n",
+    "    etime =  ema_row['stime'] + timedelta(minutes=30)\n",
+    "    mask = (result['stime'] == stime) & (result['etime'] == etime)\n",
+    "    \n",
+    "    act_0 = activity_pre[(activity_pre['activity_type'] == 0) \n",
+    "             & (activity_pre.index >= stime)\n",
+    "             & (activity_pre.index < etime)\n",
+    "             & (activity_pre['uid'] == 'CwveK4fKgHXbBgGZm4sUrnZSaZZ2') ].count().activity_type\n",
+    "    act_1 = activity_pre[(activity_pre['activity_type'] == 1) \n",
+    "             & (activity_pre.index >= stime)\n",
+    "             & (activity_pre.index < etime)\n",
+    "             & (activity_pre['uid'] == 'CwveK4fKgHXbBgGZm4sUrnZSaZZ2') ].count().activity_type\n",
+    "    act_3 = activity_pre[(activity_pre['activity_type'] == 3) \n",
+    "             & (activity_pre.index >= stime)\n",
+    "             & (activity_pre.index < etime)\n",
+    "             & (activity_pre['uid'] == 'CwveK4fKgHXbBgGZm4sUrnZSaZZ2') ].count().activity_type\n",
+    "    act_7 = activity_pre[(activity_pre['activity_type'] == 7) \n",
+    "             & (activity_pre.index >= stime)\n",
+    "             & (activity_pre.index < etime)\n",
+    "             & (activity_pre['uid'] == 'CwveK4fKgHXbBgGZm4sUrnZSaZZ2') ].count().activity_type\n",
+    "    act_8 = activity_pre[(activity_pre['activity_type'] == 8) \n",
+    "             & (activity_pre.index >= stime)\n",
+    "             & (activity_pre.index < etime)\n",
+    "             & (activity_pre['uid'] == 'CwveK4fKgHXbBgGZm4sUrnZSaZZ2') ].count().activity_type\n",
+    "    \n",
+    "    result['act0'] =result['act0'].mask(mask, act_0)\n",
+    "    result['act1'] =result['act1'].mask(mask, act_1)\n",
+    "    result['act3'] =result['act3'].mask(mask, act_3)\n",
+    "    result['act7'] =result['act7'].mask(mask, act_7)\n",
+    "    result['act8'] =result['act8'].mask(mask, act_8)\n",
+    "\n",
+    "   "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### App Data Mapping"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 339,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "\n",
+    "for i in app_list:\n",
+    "    result[i] = 0\n",
+    "    \n",
+    "for ema_index, ema_row in result.iterrows():\n",
+    "\n",
+    "    stime = ema_row['stime']\n",
+    "    etime = ema_row['etime']\n",
+    "    mask = (result['stime'] == stime) & (result['etime'] == etime)\n",
+    "    \n",
+    "    for app in app_list:\n",
+    "\n",
+    "        if app != \"\":\n",
+    "            count = app_pre[(app_pre['app_type'] == app) \n",
+    "                 & (app_pre.index >= stime)\n",
+    "                 & (app_pre.index < etime)\n",
+    "                 & (app_pre['uid'] == 'CwveK4fKgHXbBgGZm4sUrnZSaZZ2') ].count().app_type\n",
+    "            result[app] =result[app].mask(mask, count)\n",
+    "        \n",
+    "    \n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Location Data Mapping"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 185,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "42"
+      ]
+     },
+     "execution_count": 185,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(loc_list)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 340,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "\n",
+    "for i in loc_list:\n",
+    "    result[i] = 0\n",
+    "    \n",
+    "for ema_index, ema_row in result.iterrows():\n",
+    "    \n",
+    "    \n",
+    "    stime = ema_row['stime']\n",
+    "    etime = ema_row['etime']\n",
+    "    \n",
+    "    mask = (result['stime'] == stime) & (result['etime'] == etime)\n",
+    "    \n",
+    "    for loc in loc_list:\n",
+    "        if loc != \"\":\n",
+    "            count = location_pre[(location_pre['loc_type'] == loc) \n",
+    "                 & (location_pre.index >= stime)\n",
+    "                 & (location_pre.index < etime)\n",
+    "                 & (location_pre['uid'] == 'CwveK4fKgHXbBgGZm4sUrnZSaZZ2') ].count().loc_type\n",
+    "            result[loc] =result[loc].mask(mask, count)\n",
+    " \n",
+    "\n",
+    "   "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 341,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "result.fillna(0)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 344,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "result.to_csv(\"CwveK4fKgHXbBgGZm4sUrnZSaZZ2_pre.csv\", encoding=\"euc-kr\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 342,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(995, 128)"
+      ]
+     },
+     "execution_count": 342,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "result.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 345,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "user1 = result"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Make DF "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 346,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "del result\n",
+    "del ema_with_activity"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 418,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "time_options = ['after', 'before']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 420,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "1DeL2E3y2JaTB5PqHHlZXdcNSfF3\n"
+     ]
+    },
+    {
+     "ename": "KeyboardInterrupt",
+     "evalue": "",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[1;31mKeyboardInterrupt\u001b[0m                         Traceback (most recent call last)",
+      "\u001b[1;32m<ipython-input-420-948455e75d02>\u001b[0m in \u001b[0;36m<module>\u001b[1;34m()\u001b[0m\n\u001b[0;32m    166\u001b[0m                          \u001b[1;33m&\u001b[0m \u001b[1;33m(\u001b[0m\u001b[0mapp_pre\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mindex\u001b[0m \u001b[1;33m>=\u001b[0m \u001b[0mstime\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m    167\u001b[0m                          \u001b[1;33m&\u001b[0m \u001b[1;33m(\u001b[0m\u001b[0mapp_pre\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mindex\u001b[0m \u001b[1;33m<\u001b[0m \u001b[0metime\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m--> 168\u001b[1;33m                          & (app_pre['uid'] == uid_param) ].count().app_type\n\u001b[0m\u001b[0;32m    169\u001b[0m                     \u001b[0mresult\u001b[0m\u001b[1;33m[\u001b[0m\u001b[0mapp\u001b[0m\u001b[1;33m]\u001b[0m \u001b[1;33m=\u001b[0m\u001b[0mresult\u001b[0m\u001b[1;33m[\u001b[0m\u001b[0mapp\u001b[0m\u001b[1;33m]\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mmask\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mmask\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mcount\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m    170\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n",
+      "\u001b[1;32mC:\\Anaconda3\\lib\\site-packages\\pandas\\core\\ops.py\u001b[0m in \u001b[0;36mwrapper\u001b[1;34m(self, other)\u001b[0m\n\u001b[0;32m   1343\u001b[0m             \u001b[0mname\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mget_op_result_name\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mself\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mother\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m   1344\u001b[0m             \u001b[0mis_other_int_dtype\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mis_integer_dtype\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mother\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mdtype\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m-> 1345\u001b[1;33m             \u001b[0mother\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mfill_int\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mother\u001b[0m\u001b[1;33m)\u001b[0m \u001b[1;32mif\u001b[0m \u001b[0mis_other_int_dtype\u001b[0m \u001b[1;32melse\u001b[0m \u001b[0mfill_bool\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mother\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m   1346\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m   1347\u001b[0m             filler = (fill_int if is_self_int_dtype and is_other_int_dtype\n",
+      "\u001b[1;32mC:\\Anaconda3\\lib\\site-packages\\pandas\\core\\ops.py\u001b[0m in \u001b[0;36m<lambda>\u001b[1;34m(x)\u001b[0m\n\u001b[0;32m   1329\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m   1330\u001b[0m     \u001b[0mfill_int\u001b[0m \u001b[1;33m=\u001b[0m \u001b[1;32mlambda\u001b[0m \u001b[0mx\u001b[0m\u001b[1;33m:\u001b[0m \u001b[0mx\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mfillna\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;36m0\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m-> 1331\u001b[1;33m     \u001b[0mfill_bool\u001b[0m \u001b[1;33m=\u001b[0m \u001b[1;32mlambda\u001b[0m \u001b[0mx\u001b[0m\u001b[1;33m:\u001b[0m \u001b[0mx\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mfillna\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;32mFalse\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mastype\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mbool\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m   1332\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m   1333\u001b[0m     \u001b[1;32mdef\u001b[0m \u001b[0mwrapper\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mself\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mother\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
+      "\u001b[1;32mC:\\Anaconda3\\lib\\site-packages\\pandas\\core\\series.py\u001b[0m in \u001b[0;36mfillna\u001b[1;34m(self, value, method, axis, inplace, limit, downcast, **kwargs)\u001b[0m\n\u001b[0;32m   3423\u001b[0m                                           \u001b[0maxis\u001b[0m\u001b[1;33m=\u001b[0m\u001b[0maxis\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0minplace\u001b[0m\u001b[1;33m=\u001b[0m\u001b[0minplace\u001b[0m\u001b[1;33m,\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m   3424\u001b[0m                                           \u001b[0mlimit\u001b[0m\u001b[1;33m=\u001b[0m\u001b[0mlimit\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mdowncast\u001b[0m\u001b[1;33m=\u001b[0m\u001b[0mdowncast\u001b[0m\u001b[1;33m,\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m-> 3425\u001b[1;33m                                           **kwargs)\n\u001b[0m\u001b[0;32m   3426\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m   3427\u001b[0m     \u001b[1;33m@\u001b[0m\u001b[0mAppender\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mgeneric\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0m_shared_docs\u001b[0m\u001b[1;33m[\u001b[0m\u001b[1;34m'replace'\u001b[0m\u001b[1;33m]\u001b[0m \u001b[1;33m%\u001b[0m \u001b[0m_shared_doc_kwargs\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
+      "\u001b[1;32mC:\\Anaconda3\\lib\\site-packages\\pandas\\core\\generic.py\u001b[0m in \u001b[0;36mfillna\u001b[1;34m(self, value, method, axis, inplace, limit, downcast)\u001b[0m\n\u001b[0;32m   5406\u001b[0m                 new_data = self._data.fillna(value=value, limit=limit,\n\u001b[0;32m   5407\u001b[0m                                              \u001b[0minplace\u001b[0m\u001b[1;33m=\u001b[0m\u001b[0minplace\u001b[0m\u001b[1;33m,\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m-> 5408\u001b[1;33m                                              downcast=downcast)\n\u001b[0m\u001b[0;32m   5409\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m   5410\u001b[0m             \u001b[1;32melif\u001b[0m \u001b[0misinstance\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mvalue\u001b[0m\u001b[1;33m,\u001b[0m \u001b[1;33m(\u001b[0m\u001b[0mdict\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mABCSeries\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
+      "\u001b[1;32mC:\\Anaconda3\\lib\\site-packages\\pandas\\core\\internals.py\u001b[0m in \u001b[0;36mfillna\u001b[1;34m(self, **kwargs)\u001b[0m\n\u001b[0;32m   3706\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m   3707\u001b[0m     \u001b[1;32mdef\u001b[0m \u001b[0mfillna\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mself\u001b[0m\u001b[1;33m,\u001b[0m \u001b[1;33m**\u001b[0m\u001b[0mkwargs\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m-> 3708\u001b[1;33m         \u001b[1;32mreturn\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mapply\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;34m'fillna'\u001b[0m\u001b[1;33m,\u001b[0m \u001b[1;33m**\u001b[0m\u001b[0mkwargs\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m   3709\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m   3710\u001b[0m     \u001b[1;32mdef\u001b[0m \u001b[0mdowncast\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mself\u001b[0m\u001b[1;33m,\u001b[0m \u001b[1;33m**\u001b[0m\u001b[0mkwargs\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
+      "\u001b[1;32mC:\\Anaconda3\\lib\\site-packages\\pandas\\core\\internals.py\u001b[0m in \u001b[0;36mapply\u001b[1;34m(self, f, axes, filter, do_integrity_check, consolidate, **kwargs)\u001b[0m\n\u001b[0;32m   3579\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m   3580\u001b[0m             \u001b[0mkwargs\u001b[0m\u001b[1;33m[\u001b[0m\u001b[1;34m'mgr'\u001b[0m\u001b[1;33m]\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m-> 3581\u001b[1;33m             \u001b[0mapplied\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mgetattr\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mb\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mf\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m**\u001b[0m\u001b[0mkwargs\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m   3582\u001b[0m             \u001b[0mresult_blocks\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0m_extend_blocks\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mapplied\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mresult_blocks\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m   3583\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n",
+      "\u001b[1;32mC:\\Anaconda3\\lib\\site-packages\\pandas\\core\\internals.py\u001b[0m in \u001b[0;36mfillna\u001b[1;34m(self, value, limit, inplace, downcast, mgr)\u001b[0m\n\u001b[0;32m    413\u001b[0m                 \u001b[1;32mreturn\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m    414\u001b[0m             \u001b[1;32melse\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m--> 415\u001b[1;33m                 \u001b[1;32mreturn\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mcopy\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m    416\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m    417\u001b[0m         \u001b[0mmask\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0misna\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mvalues\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
+      "\u001b[1;32mC:\\Anaconda3\\lib\\site-packages\\pandas\\core\\internals.py\u001b[0m in \u001b[0;36mcopy\u001b[1;34m(self, deep, mgr)\u001b[0m\n\u001b[0;32m    776\u001b[0m         \u001b[0mvalues\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mvalues\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m    777\u001b[0m         \u001b[1;32mif\u001b[0m \u001b[0mdeep\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m--> 778\u001b[1;33m             \u001b[0mvalues\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mvalues\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mcopy\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m    779\u001b[0m         \u001b[1;32mreturn\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mmake_block_same_class\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mvalues\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m    780\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n",
+      "\u001b[1;31mKeyboardInterrupt\u001b[0m: "
+     ]
+    }
+   ],
+   "source": [
+    "#stime, etime 을 date 형식으로 변경\n",
+    "\n",
+    "\n",
+    "for user in user_list:\n",
+    "    uid_param = user\n",
+    "    print(user)\n",
+    "    for time_opt in time_options:\n",
+    "        time_param = time_opt\n",
+    "    #make column list\n",
+    "        ema_cols = ema_date.columns\n",
+    "        activity_cols = set(activity_pre['activity_type'])\n",
+    "        loc_list = set(location_pre['loc_type'])\n",
+    "        app_list = set(app_pre['app_type'])\n",
+    "\n",
+    "        index_list = [] \n",
+    "        column_list=[]\n",
+    "\n",
+    "        preprocessing = PREPROCESSING()\n",
+    "\n",
+    "        count = 0\n",
+    "\n",
+    "        #    if 'CwveK4fKgHXbBgGZm4sUrnZSaZZ2' in file or '2zXMPviuTnUjrpdK0ZBPISBeJ972' in file:\n",
+    "\n",
+    "        result = pd.DataFrame()\n",
+    "        uids = []\n",
+    "        emas = []\n",
+    "        etime_list = []\n",
+    "        tmp = 0\n",
+    "\n",
+    "        index_list = []\n",
+    "        ema_list = []\n",
+    "        count = 0\n",
+    "        index_dict = {}\n",
+    "        for index in ema_date[ema_date['uid']==uid_param].iterrows():\n",
+    "            stime = index[1]['stime']\n",
+    "            etime = index[1]['etime']\n",
+    "            uid = index[1]['uid']\n",
+    "            ema = index[1]['EMA']\n",
+    "            #print(\"***\", stime, etime)\n",
+    "\n",
+    "            stime_year = stime.year\n",
+    "            stime_month = stime.month\n",
+    "            stime_day = stime.day\n",
+    "            stime_hour = stime.hour\n",
+    "            stime_minute = stime.minute\n",
+    "            stime_second = stime.second\n",
+    "\n",
+    "            if time_param == 'before':\n",
+    "                default_stime = datetime(stime_year, stime_month, stime_day,0, 0, 0)\n",
+    "                time_var = stime\n",
+    "\n",
+    "                while time_var >= default_stime:\n",
+    "                    index_dict.update( {count : (time_var, ema)} )        \n",
+    "                    time_var = time_var - timedelta(minutes=30)\n",
+    "                    count +=1\n",
+    "\n",
+    "                default_etime = datetime(stime_year, stime_month, stime_day,23, 59, 59)\n",
+    "                time_var = stime\n",
+    "\n",
+    "                #ema 시작시간 ~ 끝시간\n",
+    "                while time_var <= etime:\n",
+    "                    time_var = time_var + timedelta(minutes=30)\n",
+    "                    index_dict.update( {count : (time_var, ema)} )\n",
+    "                    count +=1\n",
+    "\n",
+    "            elif time_param == 'after':\n",
+    "                default_stime = datetime(stime_year, stime_month, stime_day,0, 0, 0)\n",
+    "                time_var = stime\n",
+    "\n",
+    "\n",
+    "                #ema 시작시간 ~ 끝시간\n",
+    "                while time_var <= etime:\n",
+    "                    time_var = time_var + timedelta(minutes=30)\n",
+    "                    index_dict.update( {count : (time_var, ema)} )\n",
+    "                    count +=1\n",
+    "\n",
+    "                default_etime = datetime(stime_year, stime_month, stime_day,23, 59, 59)\n",
+    "                time_var = stime\n",
+    "\n",
+    "                while time_var <= default_etime:\n",
+    "                    index_dict.update( {count : (time_var, ema)} )        \n",
+    "                    time_var = time_var + timedelta(minutes=30)\n",
+    "                    count +=1\n",
+    "\n",
+    "\n",
+    "\n",
+    "        result = pd.DataFrame()\n",
+    "\n",
+    "\n",
+    "\n",
+    "\n",
+    "        for key in index_dict:\n",
+    "\n",
+    "            result.loc[key,'stime'] = index_dict[key][0]\n",
+    "            result.loc[key,'etime'] = result.loc[key,'stime']+timedelta(minutes=30)\n",
+    "\n",
+    "            result.loc[key,'EMA'] =index_dict[key][1]\n",
+    "\n",
+    "            result.loc[key,\"Absolute_time\"] = result.loc[key,'stime'].timestamp()\n",
+    "            result.loc[key,\"day_of_year\"] = result.loc[key,'stime'].timetuple().tm_yday\n",
+    "            result.loc[key,\"day_of_week\"] = result.loc[key,'stime'].weekday()\n",
+    "            result.loc[key,\"month_of_year\"] = result.loc[key,'stime'].month\n",
+    "            result.loc[key,\"hour_of_day\"] = result.loc[key,'stime'].hour\n",
+    "            result.loc[key,\"minute_of_hour\"] = result.loc[key,'stime'].minute\n",
+    "            result.loc[key,'act1'] = 0\n",
+    "\n",
+    "\n",
+    "        result['act0'] = 0\n",
+    "        result['act1'] = 0\n",
+    "        result['act3'] = 0\n",
+    "        result['act7'] = 0\n",
+    "        result['act8'] = 0\n",
+    "\n",
+    "        for ema_index, ema_row in result.iterrows():\n",
+    "\n",
+    "            c0 = 0\n",
+    "            c1= 0\n",
+    "            c3 = 0\n",
+    "            c7 = 0\n",
+    "            c8 = 0\n",
+    "            stime = ema_row['stime']\n",
+    "            etime =  ema_row['stime'] + timedelta(minutes=30)\n",
+    "            mask = (result['stime'] == stime) & (result['etime'] == etime)\n",
+    "\n",
+    "            act_0 = activity_pre[(activity_pre['activity_type'] == 0) \n",
+    "                     & (activity_pre.index >= stime)\n",
+    "                     & (activity_pre.index < etime)\n",
+    "                     & (activity_pre['uid'] == uid_param) ].count().activity_type\n",
+    "            act_1 = activity_pre[(activity_pre['activity_type'] == 1) \n",
+    "                     & (activity_pre.index >= stime)\n",
+    "                     & (activity_pre.index < etime)\n",
+    "                     & (activity_pre['uid'] == uid_param) ].count().activity_type\n",
+    "            act_3 = activity_pre[(activity_pre['activity_type'] == 3) \n",
+    "                     & (activity_pre.index >= stime)\n",
+    "                     & (activity_pre.index < etime)\n",
+    "                     & (activity_pre['uid'] == uid_param) ].count().activity_type\n",
+    "            act_7 = activity_pre[(activity_pre['activity_type'] == 7) \n",
+    "                     & (activity_pre.index >= stime)\n",
+    "                     & (activity_pre.index < etime)\n",
+    "                     & (activity_pre['uid'] == uid_param) ].count().activity_type\n",
+    "            act_8 = activity_pre[(activity_pre['activity_type'] == 8) \n",
+    "                     & (activity_pre.index >= stime)\n",
+    "                     & (activity_pre.index < etime)\n",
+    "                     & (activity_pre['uid'] ==uid_param) ].count().activity_type\n",
+    "\n",
+    "            result['act0'] =result['act0'].mask(mask, act_0)\n",
+    "            result['act1'] =result['act1'].mask(mask, act_1)\n",
+    "            result['act3'] =result['act3'].mask(mask, act_3)\n",
+    "            result['act7'] =result['act7'].mask(mask, act_7)\n",
+    "            result['act8'] =result['act8'].mask(mask, act_8)\n",
+    "\n",
+    "\n",
+    "        for i in app_list:\n",
+    "            result[i] = 0\n",
+    "\n",
+    "        for ema_index, ema_row in result.iterrows():\n",
+    "\n",
+    "            stime = ema_row['stime']\n",
+    "            etime = ema_row['etime']\n",
+    "            mask = (result['stime'] == stime) & (result['etime'] == etime)\n",
+    "\n",
+    "            for app in app_list:\n",
+    "\n",
+    "                if app != \"\":\n",
+    "                    count = app_pre[(app_pre['app_type'] == app) \n",
+    "                         & (app_pre.index >= stime)\n",
+    "                         & (app_pre.index < etime)\n",
+    "                         & (app_pre['uid'] == uid_param) ].count().app_type\n",
+    "                    result[app] =result[app].mask(mask, count)\n",
+    "\n",
+    "\n",
+    "\n",
+    "        for i in loc_list:\n",
+    "            result[i] = 0\n",
+    "\n",
+    "        for ema_index, ema_row in result.iterrows():\n",
+    "\n",
+    "\n",
+    "            stime = ema_row['stime']\n",
+    "            etime = ema_row['etime']\n",
+    "\n",
+    "            mask = (result['stime'] == stime) & (result['etime'] == etime)\n",
+    "\n",
+    "            for loc in loc_list:\n",
+    "                if loc != \"\":\n",
+    "                    count = location_pre[(location_pre['loc_type'] == loc) \n",
+    "                         & (location_pre.index >= stime)\n",
+    "                         & (location_pre.index < etime)\n",
+    "                         & (location_pre['uid'] == uid_param) ].count().loc_type\n",
+    "                    result[loc] =result[loc].mask(mask, count)\n",
+    "        result['uid'] = uid_param\n",
+    "        result.to_csv(uid_param + time_param + \".csv\", encoding = \"euc-kr\")\n",
+    "      "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 357,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "result.to_csv(uid_param + time_param + \".csv\", encoding = \"euc-kr\")"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.7"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
