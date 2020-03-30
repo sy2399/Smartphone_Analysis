@@ -42,6 +42,8 @@ From smartphone data collection to modeling
 ## 4. Model
 ### 4-1. SWB Trend Prediction 
 
+![DP_SWB_change](https://user-images.githubusercontent.com/25919167/77882060-2be2c280-729b-11ea-9068-081062fef085.jpeg)
+
 - Purpose
   - (1) 삶의 만족도가 증가하는 시점, 감소하는 시점 파악
   - (2) 삶의 만족도가 증가할 때의 사용자 행동 패턴 파악
