@@ -53,7 +53,7 @@ From smartphone data collection to modeling
 - Y : Subjective Well-being Trend (Increase, Decrease, No change)
 
 - Model 
-  - [x] Simple : Randomforest, LogisticRegression, Adaboost [Code Link](https://github.com/sy2399/Smartphone_Analysis/blob/master/Code/03.%20Modeling/00.%20Model%20Basic1_SWB.ipynb)
+  - [x] Simple : Randomforest, LogisticRegression, Adaboost [Code Link](https://github.com/sy2399/Smartphone_Analysis/blob/master/Code/03.%20Modeling/00.%20%5BSWB%5DModel%20Simple.ipynb)
   - [x] Best : LSTM [Code Link](https://github.com/sy2399/Smartphone_Analysis/blob/master/Code/03.%20Modeling/01.%20%5BSWB%5DModel%20Deep.ipynb)
 
 - Paper : Rhim, S., Lee, U., & Han, K. (2020). Tracking and Modeling Subjective Well-Being Using Smartphone-Based Digital Phenotype. International Conference on User Modeling, Adaptation, and Personalization (UMAP), ACM. (acceptance rate: 23%)   
