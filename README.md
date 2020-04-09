@@ -21,11 +21,14 @@ From smartphone data collection to modeling
 ******
 ## 3. Feature Extraction
 ### 3-1. App
-- [x] Count, Frequency  [Code Link](https://github.com/sy2399/Smartphone_Analysis/blob/master/Code/02.Feature%20Extraction/App_Features_1_Basic%20(count%2C%20frequency).ipynb, "code_link1")
+- [x] Count, Frequency  
+[Code Link] (https://github.com/sy2399/Smartphone_Analysis/blob/master/Code/02.Feature%20Extraction/App_Features_1_Basic%20(count%2C%20frequency).ipynb, "code_link1")
 
 
-- [x] 💡LDA [Code Link](https://github.com/sy2399/Smartphone_Analysis/blob/master/Code/02.Feature%20Extraction/App_Features_2_LDA%20(app%20to%20text).ipynb, "code_link2")
-- [x] 💡Graph-Network [Code Link](https://github.com/sy2399/Smartphone_Analysis/blob/master/Code/02.Feature%20Extraction/App_Features_3_Graph(app%20to%20graph).ipynb, "code_link3")
+- [x] 💡LDA 
+[Code Link] (https://github.com/sy2399/Smartphone_Analysis/blob/master/Code/02.Feature%20Extraction/App_Features_2_LDA%20(app%20to%20text).ipynb, "code_link2")
+- [x] 💡Graph-Network 
+[Code Link] (https://github.com/sy2399/Smartphone_Analysis/blob/master/Code/02.Feature%20Extraction/App_Features_3_Graph(app%20to%20graph).ipynb, "code_link3")
 
 ### 3-2. Activity
 - count, duration of each activity (moving, not moving)
