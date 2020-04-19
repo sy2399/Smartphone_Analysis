@@ -26,9 +26,9 @@ From smartphone data collection to modeling
 
 
 - [x] 💡LDA 
-[Code Link] (https://github.com/sy2399/Smartphone_Analysis/blob/master/Code/02.Feature%20Extraction/App_Features_2_LDA%20(app%20to%20text).ipynb, "code_link2")
+[Code Link](https://github.com/sy2399/Smartphone_Analysis/blob/master/Code/02.Feature%20Extraction/App_Features_2_LDA%20(app%20to%20text).ipynb)
 - [x] 💡Graph-Network 
-[Code Link] (https://github.com/sy2399/Smartphone_Analysis/blob/master/Code/02.Feature%20Extraction/App_Features_3_Graph(app%20to%20graph).ipynb, "code_link3")
+[Code Link](https://github.com/sy2399/Smartphone_Analysis/blob/master/Code/02.Feature%20Extraction/App_Features_3_Graph(app%20to%20graph).ipynb)
 
 ### 3-2. Activity
 - count, duration of each activity (moving, not moving)
